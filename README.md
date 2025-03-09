@@ -23,16 +23,18 @@ pip install -e .
 -->
 
 下载模型（二选一）
+
+
 Download models using huggingface-cli:
 ``` sh
 pip install "huggingface_hub[cli]"
-huggingface-cli download Wan-AI/Wan2.1-T2V-14B --local-dir ./Wan2.1-T2V-14B
+huggingface-cli download Wan-AI/Wan2.1-T2V-1.3B --local-dir .models/Wan-AI/Wan2.1-T2V-1.3B
 ```
 
 Download models using modelscope-cli:
 ``` sh
 pip install modelscope
-modelscope download Wan-AI/Wan2.1-T2V-14B --local_dir ./Wan2.1-T2V-14B
+modelscope download Wan-AI/Wan2.1-T2V-1.3B --local_dir .models/Wan-AI/Wan2.1-T2V-1.3B
 ```
 
 

@@ -35,18 +35,8 @@ __2，下载1.3b模型__
 
 在 __Wan2.1_WebUI__ 目录下
 
-（二选一）
 
-
-用 huggingface-cli下载模型:
-``` sh
-pip install "huggingface_hub[cli]"
-huggingface-cli download Wan-AI/Wan2.1-T2V-1.3B --local-dir models/Wan-AI/Wan2.1-T2V-1.3B
-```
-
-或者
-
-用 modelscope-cli下载模型:
+用 modelscope-cli下载模型命令:
 ``` sh
 pip install modelscope
 modelscope download Wan-AI/Wan2.1-T2V-1.3B --local_dir models/Wan-AI/Wan2.1-T2V-1.3B

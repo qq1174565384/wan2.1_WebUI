@@ -1,0 +1,5 @@
+diffsynth.egg-info/PKG-INFO
+diffsynth.egg-info/SOURCES.txt
+diffsynth.egg-info/dependency_links.txt
+diffsynth.egg-info/requires.txt
+diffsynth.egg-info/top_level.txt

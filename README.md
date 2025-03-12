@@ -1,37 +1,33 @@
 
 
 
-从DiffSynth Studio分支构建
 
 ## 安装
 
-#### 使用整合包
+#### 使用整合包（仅含1.3B模型）
+```
+链接准备中。。。
+```
 
 
 
 
-或者
+# 或者
+
+#### 自己配置
 
 
 
 
+#### 1，下载源代码：
 
-
- __1，从源代码安装代码：__
 
 ``` sh
 git clone https://github.com/qq1174565384/wan2.1_WebUI.git
 ```
-<!--
-```
-cd wan2.1_WebUI
-```
-```
-pip install -e .
-```
--->
 
-__2，下载1.3b模型__
+
+#### 2，下载模型
 
 在 __Wan2.1_WebUI__ 目录下
 
@@ -43,19 +39,24 @@ modelscope download Wan-AI/Wan2.1-T2V-1.3B --local_dir models/Wan-AI/Wan2.1-T2V-
 ```
 确保 __Wan2.1-T2V-1.3B__ 文件夹在  wan2.1_WebUI\models\Wan-AI\  目录下
 ![image](image/model.png)
-__3，安装环境__
+
+__14b模型同理，把1.3B改为14B__
+
+
+#### 3，安装环境
+
 在 __Wan2.1_WebUI__ 目录下
 ``` sh
-pip install -e .
-``` 
+python setup.py install
+```
 
-![image](image/files.png)
-## 使用
 
-双击
-``` sh
-启动.bat
-``` 
+
+#### 4，启动
+
+
+双击  __Wan2.1WebUI.bat__
+
 打开浏览器进入
 ```
 http://127.0.0.1:7860

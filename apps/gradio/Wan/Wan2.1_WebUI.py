@@ -1,4 +1,5 @@
 import gradio as gr
+import webbrowser
 
 # 定义一个简单的函数，用于处理输入并返回输出
 def greet(name):
@@ -14,4 +15,5 @@ iface = gr.Interface(
 
 # 启动 Gradio 应用
 if __name__ == "__main__":
-    iface.launch()
+    # 启动 Gradio 应用并自动打开浏览器
+    iface.launch(inbrowser=True)

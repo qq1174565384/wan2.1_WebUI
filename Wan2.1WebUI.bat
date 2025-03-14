@@ -2,13 +2,15 @@
 REM 设置UTF-8编码
 chcp 65001 >nul
 
+echo 当前目录: %cd%
+
 REM 切换到项目目录
 cd /d ".\apps\gradio\Wan" || (
     echo [错误] 无法切换到项目目录
     pause
     exit /b 1
 )
-echo 当前目录: %cd%
+
 
 REM 激活虚拟环境
 if not exist ".wan2.1env\Scripts\activate" (
@@ -49,7 +51,8 @@ for %%i in (
     "torch==2.6.0"
     "regex!=2019.12.17"
     "tokenizers>=0.20,<0.21"
-    "fastrlock>=0.5"
+    "fastrlock>=0.5
+    "diffsynth"
 ) do (
     echo 正在检查: %%i
     pip show %%i >nul 2>&1

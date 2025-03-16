@@ -1,3 +1,4 @@
 Wan-AI
 .wan2.1env
 *.pyc
+/output

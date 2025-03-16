@@ -5,13 +5,6 @@ chcp 65001 >nul
 echo 当前目录: %cd%
 
 
-REM 切换到项目目录
-cd /d ".\apps\gradio\Wan" || (
-    echo [错误] 无法切换到项目目录
-    pause
-    exit /b 1
-)
-
 
 REM 激活虚拟环境
 if not exist ".wan2.1env\Scripts\activate" (
@@ -32,6 +25,12 @@ echo %PATH% | findstr /i ".wan2.1env" >nul || (
 )
 echo 虚拟环境已成功激活
 
+REM 切换到项目目录
+cd /d ".\apps\gradio\Wan" || (
+    echo [错误] 无法切换到项目目录
+    pause
+    exit /b 1
+)
 
 REM 检查并运行主脚本
 if not exist "Wan2.1_WebUI.py" (

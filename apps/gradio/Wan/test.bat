@@ -1,0 +1,2 @@
+gradio wan_1_3b_generation_video.py
+pause

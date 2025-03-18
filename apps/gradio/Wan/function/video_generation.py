@@ -55,6 +55,7 @@ def generate_video_from_text(
     # 使用 ast.literal_eval 替代 eval
     t2v_tile_size = ast.literal_eval(t2v_tile_size)
     t2v_tile_stride = ast.literal_eval(t2v_tile_stride)
+    print("正在生成视频...")
     try:
         t2v = pipe(
             prompt=t2v_prompt,
@@ -87,11 +88,11 @@ def generate_video_from_text(
     
     # Generate unique filename based on current timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    video_filename = f"Wan2.1_i2v_{timestamp}.mp4"
+    video_filename = f"Wan2_1_i2v_{timestamp}.mp4"
     video_path = os.path.join(output_dir, video_filename)
-    
+    print("正在保存视频...")
     save_video(t2v, video_path, fps=output_fps, quality=output_quality)
-
+    print("正在保存预览图...")
     # Save preview image
     import cv2
     from PIL import Image
@@ -102,7 +103,7 @@ def generate_video_from_text(
         preview_image = Image.fromarray(frame)
         preview_path = os.path.join(output_dir, f"{os.path.splitext(video_filename)[0]}.jpg")
         preview_image.save(preview_path)
-
+    print("正在保存参数文件...")
     # Save parameters to a text file
     params = {
                 "prompt": t2v_prompt,
@@ -125,10 +126,10 @@ def generate_video_from_text(
     param_filename = f"Wan2_1_i2v_{timestamp}.txt"
     param_path = os.path.join(output_dir, param_filename)
     
-    with open(param_path, 'w') as f:
+    with open(param_path, 'w', encoding='utf-8') as f:
         for key, value in params.items():
             f.write(f"{key}: {value}\n")
-    
+    print("任务成功")
     return video_path
 
 # 定义i2v函数
@@ -192,7 +193,7 @@ def generate_video_from_image(
     
     # Generate unique filename based on current timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    video_filename = f"Wan2.1_i2v_{timestamp}.mp4"
+    video_filename = f"Wan2_1_i2v_{timestamp}.mp4"
     video_path = os.path.join(output_dir, video_filename)
     
     save_video(i2v, video_path, fps=output_fps, quality=output_quality)
@@ -230,7 +231,7 @@ def generate_video_from_image(
     param_filename = f"Wan2_1_i2v_{timestamp}.txt"
     param_path = os.path.join(output_dir, param_filename)
     
-    with open(param_path, 'w') as f:
+    with open(param_path, 'w', encoding='utf-8') as f:
         for key, value in params.items():
             f.write(f"{key}: {value}\n")
 
@@ -300,7 +301,7 @@ def generate_video_from_video(
     
     # Generate unique filename based on current timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    video_filename = f"Wan2.1_v2v_{timestamp}.mp4"
+    video_filename = f"Wan2_1_v2v_{timestamp}.mp4"
     video_path = os.path.join(output_dir, video_filename)
     
     save_video(v2v, video_path, fps=output_fps, quality=output_quality)
@@ -338,7 +339,7 @@ def generate_video_from_video(
     param_filename = f"Wan2_1_v2v_{timestamp}.txt"
     param_path = os.path.join(output_dir, param_filename)
     
-    with open(param_path, 'w') as f:
+    with open(param_path, 'w', encoding='utf-8') as f:
         for key, value in params.items():
             f.write(f"{key}: {value}\n")
     

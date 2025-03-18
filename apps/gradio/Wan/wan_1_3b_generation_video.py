@@ -1,19 +1,16 @@
 
 import os
-import subprocess
 import gradio as gr
-from examples import t2v_examples, i2v_examples
+from function.history import t2v_history_list,load_t2v_history
 from function.video_generation import generate_video_from_text, generate_video_from_image, generate_video_from_video
 from function.open_output_folder import open_output_folder
 
-# 获取项目根目录的绝对路径
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 
 # # 定义css样式
 custom_css = """
 /* 按钮样式 */
 #button {
-    background-color: #3938c7; /* 暗蓝色背景 */
+    background-color: #2263dd; /* 暗蓝色背景 */
     color: #f8f9fa; /* 浅灰色文字 */
     padding: 12px 24px;
     font-size: 20px;
@@ -31,8 +28,9 @@ custom_css = """
 }
 
 #button2 {
-    background-color: #3938c7; /* 暗蓝色背景 */
+    background-color: #2263dd; /* 暗蓝色背景 */
     height: 78px; /* 设置按钮高度 */
+    border-radius: 4px;
 }
 
 #button2:hover {
@@ -50,12 +48,12 @@ custom_css = """
     position: relative;
     cursor: pointer;
     outline: none;
-    border: 2px solid #3938c7; /* 边框颜色 */
+    border: 2px solid ##2263dd; /* 边框颜色 */
     margin-top: 00px; /* 上边距 */
 }
 
 #custom-checkbox input[type="checkbox"]:checked {
-    background-color: #3938c7; /* 选中时的背景颜色 */
+    background-color: #2c3136; /* 选中时的背景颜色 */
 }
 
 #custom-checkbox input[type="checkbox"]:after {
@@ -70,7 +68,7 @@ custom_css = """
     left: 6px;
     width: 6px;
     height: 12px;
-    border: solid #f8f9fa; /* 对勾的颜色 */
+    border: solid #2c3136; /* 对勾的颜色 */
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
 }
@@ -85,7 +83,7 @@ custom_css = """
 }
 """
 # # 创建 Gradio 界面
-with gr.Blocks(css=custom_css) as demo:
+with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
     # 显示一个 HTML 标题，居中、32px 字体大小、加粗，并在底部留出 20px 边距
     gr.HTML("""
                <div style="text-align: center; font-size: 32px; font-weight: bold; margin-bottom: 20px;">
@@ -104,7 +102,7 @@ with gr.Blocks(css=custom_css) as demo:
             with gr.Row(): 
                 with gr.Tabs():
                     # 文本到视频标签页
-                    with gr.TabItem("文生视频") as t2v_tab:
+                    with gr.TabItem("文生视频"):
                         with gr.Row():
                             #参数调节
                             with gr.Column(): 
@@ -112,7 +110,7 @@ with gr.Blocks(css=custom_css) as demo:
                                     # 定义一个文本框，用于输入文本到视频的提示词
                                     t2v_prompt = gr.Textbox(
                                         label="正面提示词",
-                                        value="",
+                                        value="特写镜头|视频中，镜头面对一位动漫女仆的脸庞，柔和的光线洒在她的皮肤上，勾勒出细腻的轮廓，镜头缓缓环绕拉远，在废墟中展示出了她带血的全身，勾线动画。",
                                         placeholder="请输入提示词",
                                         lines=5,
                                     )
@@ -147,24 +145,25 @@ with gr.Blocks(css=custom_css) as demo:
                                     t2v_input_video = gr.Video(label="输入视频", value=None,visible=False)
                                     t2v_rand_device = gr.Textbox(value="cuda",label="随机设备",placeholder="cuda or cpu",interactive=True,visible=False) 
                                     t2v_sigma_shift = gr.Slider(visible=False,label="Sigma Shift", value=5)
-                                with gr.Row():  
-                                    with gr.Column(scale=1,min_width=1): 
-                                        t2v_seed = gr.Number(label="随机数种子 (Seed)", value=-1)
-                                    with gr.Column(scale=1,min_width=1):
-                                        run_t2v_button = gr.Button("生 成",min_width=20,elem_id="button")
+                                
                                 with gr.Row(): 
                                     t2v_tile_size = gr.Textbox(visible=True,label="分块大小(tile_size)", value="(30, 52)",interactive=True)
                                     t2v_tile_stride = gr.Textbox(visible=True,label="分块步长(tile_stride)", value="(15, 26)",interactive=True)    
                                     t2v_tiled = gr.Checkbox(label="  分块生成（减少显存使用）", value=True,elem_id="custom-checkbox")    
+                                with gr.Row():  
+                                    with gr.Column(scale=1,min_width=1): 
+                                        t2v_seed = gr.Number(label="随机数种子 (Seed)", value=-1)
+                                    with gr.Column(scale=1,min_width=1):
+                                        run_t2v_button = gr.Button("生 成",min_width=20,elem_id="button")    
                             #显示生成的视频
                             with gr.Column():
 
                                 with gr.Row():
                                     # 定义一个视频显示组件，用于显示生成的视频
-                                    result_gallery = gr.Video(label='Generated Video',
+                                    result_gallery = gr.Video(label='生成视频',
                                                                 interactive=False,
-                                                                height=532)
-                                
+                                                                height=525)
+                                 
                                 with gr.Row():
                                     # 定义输出视频的参数fps，quality
                                     with gr.Column(min_width=1):
@@ -183,9 +182,8 @@ with gr.Blocks(css=custom_css) as demo:
                                             """
                                             - **prompt**：指定生成视频内容的文本描述。
                                             - **negative_prompt**：用于排除不希望出现在生成视频中的特征。比如指定“色调艳丽，过曝”等负面特征，让生成的视频避免出现这些情况。
-                                            - **denoising_strength**：去噪强度，值越大，对输入（图像或视频）。
                                             - **seed**：随机种子，用于控制生成的随机性。设置相同的种子可以保证每次生成的结果一致，方便复现特定的生成效果。
-                                            - **num_frames**：生成视频的帧数，默认是 81 帧，帧数越多，视频时长可能越长。
+                                            - **num_frames**：生成视频的帧数，帧数越多，视频生成时间越长。
                                             - **cfg_scale**：控制生成结果与提示词的匹配程度。
                                             - **num_inference_steps**：推理步数，指定生成过程中的迭代次数。步数越多，生成的质量可能越高，但计算时间也会相应增加。
                                             - **tile_size**：分块的大小，以元组形式表示，例如 (30, 52) 表示分块的高度和宽度。
@@ -194,9 +192,21 @@ with gr.Blocks(css=custom_css) as demo:
                                             """,
                                             label="生成参数帮助",
                                 )
-                                        
+                        # 历史
+                        with gr.Row():
+                            def update_examples():
+                                t2v_history_list = load_t2v_history()
+                                return gr.Dataset(samples=t2v_history_list)
+                                
+                            t2v_history = gr.Examples(t2v_history_list,
+                                            inputs=[t2v_prompt, result_gallery],
+                                            outputs=[result_gallery],
+                                            label="历史记录（仅显示提示词和视频，详细参数请打开输出文件夹查看txt文件)"
+                                            )
+                            result_gallery.change(update_examples, None, t2v_history.dataset)   
+                           
                     # 图像到视频标签页
-                    with gr.TabItem("图生视频") as i2v_tab:
+                    with gr.TabItem("图生视频"):
                         with gr.Row():    
                            i2v_input_image = gr.Image(label="输入图像", type="pil", value=None)
                         with gr.Row():
@@ -253,7 +263,7 @@ with gr.Blocks(css=custom_css) as demo:
                             i2v_tiled = gr.Checkbox(label="  分块生成（减少显存使用）", value=True,elem_id="custom-checkbox")    
                    
                     # 视频到视频标签页
-                    with gr.TabItem("视频生视频") as v2v_tab:
+                    with gr.TabItem("视频生视频"):
                         with gr.Row():    
                             v2v_input_video = gr.Video(label="输入视频", value=None)
                         with gr.Row():
@@ -308,74 +318,10 @@ with gr.Blocks(css=custom_css) as demo:
                             v2v_tile_stride = gr.Textbox(visible=True,label="分块步长(tile_stride)", value="(15, 26)",interactive=True)    
                             v2v_tiled = gr.Checkbox(label="  分块生成（减少显存使用）", value=True,elem_id="custom-checkbox")           
 
-        
 
-    # # 定义一个隐藏的视频组件，用于示例展示
-    # fake_video = gr.Video(label='Examples', visible=False, interactive=False)
-    # 定义一个可见的行组件，用于显示文本到视频的示例
-    with gr.Row(visible=True) as t2v_eg:
-        gr.Examples(t2v_examples,
-                    inputs=[t2v_prompt, result_gallery],
-                    outputs=[result_gallery])
-
-    # 定义一个隐藏的行组件，用于显示图像到视频的示例
-    with gr.Row(visible=False) as i2v_eg:
-        gr.Examples(i2v_examples,
-                    inputs=[i2v_prompt, i2v_input_image, result_gallery],
-                    outputs=[result_gallery])
-    # 定义一个隐藏的行组件，用于显示图像到视频的示例
-    with gr.Row(visible=False) as v2v_eg:
-        gr.Examples(i2v_examples,visible=False,
-                    inputs=[v2v_prompt, v2v_input_video, result_gallery],
-                    outputs=[result_gallery])
-        
-
-    # 通用的标签页切换函数
-    def switch_tab(t2v_visible, i2v_visible, v2v_visible, task_mode):
-        """
-        通用的标签页切换函数
-        :param t2v_visible: 文本到视频示例行的可见性
-        :param i2v_visible: 图像到视频示例行的可见性
-        :param v2v_visible: 视频到视频示例行的可见性
-        :param task_mode: 当前任务模式
-        :return: 文本到视频示例行、图像到视频示例行、视频到视频示例行和任务状态
-        """
-        return gr.Row(visible=t2v_visible), gr.Row(visible=i2v_visible), gr.Row(visible=v2v_visible), task_mode
-    
-    # 切换到文本到视频（Text to Video）标签页时调用此函数
-    def switch_t2v_tab():
-        """
-        切换到文本到视频（Text to Video）标签页时调用此函数
-        显示文本到视频示例行，隐藏图像到视频和视频到视频示例行，并将任务状态设置为 't2v'
-        """
-        return switch_tab(True, False, False, "t2v")
-    
-    # 切换到图像到视频（Image to Video）标签页时调用此函数
-    def switch_i2v_tab():
-        """
-        切换到图像到视频（Image to Video）标签页时调用此函数
-        隐藏文本到视频和视频到视频示例行，显示图像到视频示例行，并将任务状态设置为 'i2v'
-        """
-        return switch_tab(False, True, False, "i2v")
-    
-    # 切换到视频到视频（Video to Video）标签页时调用此函数
-    def switch_v2v_tab():
-        """
-        切换到视频到视频（Video to Video）标签页时调用此函数
-        隐藏文本到视频和图像到视频示例行，显示视频到视频示例行，并将任务状态设置为 'v2v'
-        """
-        return switch_tab(False, False, True, "v2v")
-
-    # 当用户选择图像到视频标签页时，调用 switch_i2v_tab 函数更新界面
-    i2v_tab.select(switch_i2v_tab, outputs=[t2v_eg, i2v_eg, v2v_eg, task])
-    # 当用户选择文本到视频标签页时，调用 switch_t2v_tab 函数更新界面
-    t2v_tab.select(switch_t2v_tab, outputs=[t2v_eg, i2v_eg, v2v_eg, task])
-    # 当用户选择视频到视频标签页时，调用 switch_v2v_tab 函数更新界面
-    v2v_tab.select(switch_v2v_tab, outputs=[t2v_eg, i2v_eg, v2v_eg, task])
+    # 定义一个函数，用于更新Examples组件的内容
 
 
-
-    
     # 修改生成按钮的点击事件
     run_t2v_button.click(
         fn = generate_video_from_text,
@@ -398,9 +344,10 @@ with gr.Blocks(css=custom_css) as demo:
             output_fps,
             output_quality
         ],
-        outputs=result_gallery  # 只输出视频
-    )
-
+        outputs=[result_gallery],  
+        show_progress = "full",
+        )
+  
     # 为其他按钮添加参数保存功能
     run_i2v_button.click(
         fn = generate_video_from_image,
@@ -449,13 +396,13 @@ with gr.Blocks(css=custom_css) as demo:
         ],
         outputs=result_gallery  # 只输出视频
     )
-
-
+  
     # 绑定按钮点击事件
     open_folder_button.click(
         fn=open_output_folder
     )
+   
+    
 
 # 启动
-demo.launch(inbrowser=True,quiet=True)
-
+demo.launch(inbrowser=True, quiet=True, allowed_paths=["../../../output/t2v"])

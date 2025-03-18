@@ -11,15 +11,28 @@ from datetime import datetime
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
 
 # 加载模型
-model_manager = ModelManager(device="cpu")
-model_manager.load_models(
-    [
-        os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "diffusion_pytorch_model.safetensors"),
-        os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "models_t5_umt5-xxl-enc-bf16.pth"),
-        os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "Wan2.1_VAE.pth"),
-    ],
-    torch_dtype=torch.bfloat16,  # You can set `torch_dtype=torch.float8_e4m3fn` to enable FP8 quantization.
-)
+model_paths = [
+    os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "diffusion_pytorch_model.safetensors"),
+    os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "models_t5_umt5-xxl-enc-bf16.pth"),
+    os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "Wan2.1_VAE.pth"),
+]
+
+for path in model_paths:
+    if not os.path.exists(path):
+        print(f"模型文件 {path} 不存在，请检查路径。")
+        raise FileNotFoundError(f"模型文件 {path} 不存在，请检查路径。")
+
+model_manager = ModelManager(device="cuda")
+try:
+    model_manager.load_models(
+        model_paths,
+        torch_dtype=torch.bfloat16,  # You can set `torch_dtype=torch.float8_e4m3fn` to enable FP8 quantization.
+    )
+except Exception as e:
+    print(f"模型加载失败: {e}")
+    # 可以根据具体情况进行进一步处理，例如退出程序或重试
+    raise
+
 # 创建管道
 pipe = WanVideoPipeline.from_model_manager(model_manager, torch_dtype=torch.bfloat16, device="cuda")
 pipe.enable_vram_management(num_persistent_param_in_dit=None)

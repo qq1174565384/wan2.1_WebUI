@@ -144,26 +144,35 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
         result_gallery, t2v_history, open_folder_button
     )
     # 显示github上md文件的内容
-    with gr.Column():
+    with gr.Row():
 
-        with gr.Row():
-                md_url = "https://raw.githubusercontent.com/qq1174565384/wan2.1_WebUI/refs/heads/main/README.md"
-                try:
-                    response = requests.get(md_url)
-                    response.raise_for_status()
-                    md_content = response.text
-                except requests.RequestException as e:
-                    md_content = f"无法下载 Markdown 文件: {e}"
-                gr.Markdown(md_content) 
-        with gr.Row():
-                md_url = "https://raw.githubusercontent.com/qq1174565384/wan2.1_WebUI/refs/heads/main/README.md"
-                try:
-                    response = requests.get(md_url)
-                    response.raise_for_status()
-                    md_content = response.text
-                except requests.RequestException as e:
-                    md_content = f"无法下载 Markdown 文件: {e}"
-                gr.Markdown(md_content) 
+        with gr.Column():
+            md_url = "https://raw.githubusercontent.com/qq1174565384/wan2.1_WebUI/refs/heads/main/apps/gradio/Wan/Version.md"
+            try:
+                response = requests.get(md_url)
+                response.raise_for_status()
+                md_content = response.text
+            except requests.RequestException as e:
+                md_content = f"无法下载 Markdown 文件: {e}"
+            gr.Markdown(md_content) 
+        with gr.Column():
+            md_url = "https://raw.githubusercontent.com/qq1174565384/wan2.1_WebUI/refs/heads/main/apps/gradio/Wan/developing.md"
+            try:
+                response = requests.get(md_url)
+                response.raise_for_status()
+                md_content = response.text
+            except requests.RequestException as e:
+                md_content = f"无法下载 Markdown 文件: {e}"
+            gr.Markdown(md_content) 
+        with gr.Column():            
+            md_url = "https://raw.githubusercontent.com/qq1174565384/wan2.1_WebUI/refs/heads/main/apps/gradio/Wan/contributor.md"
+            try:
+                response = requests.get(md_url)
+                response.raise_for_status()
+                md_content = response.text
+            except requests.RequestException as e:
+                md_content = f"无法下载 Markdown 文件: {e}"
+            gr.Markdown(md_content)         
 
 # 启动
 demo.launch(inbrowser=True, quiet=True, allowed_paths=["../../../output/t2v"])

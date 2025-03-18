@@ -198,6 +198,25 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
                 except requests.RequestException as e:
                     md_content = f"无法下载 Markdown 文件: {e}"
             gr.Markdown(md_content) 
+        with gr.Column():
+                    # 本地文件路径
+                    local_md_path = "help.md"
+                    md_url = "https://raw.githubusercontent.com/qq1174565384/wan2.1_WebUI/refs/heads/main/apps/gradio/Wan/help.md"
+                    try:
+                        # 尝试读取本地文件
+                        with open(local_md_path, 'r', encoding='utf-8') as file:
+                            md_content = file.read()
+                    except FileNotFoundError:
+                        try:
+                            # 本地文件不存在，尝试从网络下载
+                            response = requests.get(md_url)
+                            response.raise_for_status()
+                            md_content = response.text
+                        except requests.RequestException as e:
+                            md_content = f"无法下载 Markdown 文件: {e}"
+                    gr.Markdown(md_content) 
+            
+            
 
 # 启动
 demo.launch(inbrowser=True, quiet=True, allowed_paths=["../../../output/t2v"])

@@ -1,5 +1,6 @@
 ## 版本信息
-
+查看更新：
+https://github.com/qq1174565384/wan2.1_WebUI/releases
 
 版本号: 0.0.1
 发布日期: 2025-03-18

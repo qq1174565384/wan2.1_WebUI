@@ -1,6 +1,6 @@
 ## 安装
 
-#### 使用整合包（仅含1.3B模型）
+#### 使用整合包
 ```
 链接准备中。。。
 ```
@@ -58,6 +58,8 @@ python setup.py install
 
 
 双击  __Wan2.1WebUI.bat__
+
+### 下面的都是DiffSynth Studio原版的文档了：
 
 
 

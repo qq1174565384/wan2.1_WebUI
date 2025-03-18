@@ -6,7 +6,9 @@
 
 或者直接联系我：
 邮箱：qq1192057376.com
+
 或者为我充电赞助我的工作：https://space.bilibili.com/147981408
+
 或者帮我的仓库贡献代码：https://github.com/qq1174565384/wan2.1_WebUI
 ### 注意
 

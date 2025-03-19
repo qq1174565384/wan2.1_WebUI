@@ -32,7 +32,13 @@ def create_t2v_ui():
                     allow_custom_value=True  # 允许用户输入自定义值
                 )
                 # 生成帧数
-                t2v_num_frames = gr.Number(label="生成帧数", value=33)
+                t2v_num_frames = gr.Number(label="生成帧数",choices=[
+                        33, 81, 121, 
+                        153, 201
+                    ],
+                     value=33,
+                    allow_custom_value=True  # 允许用户输入自定义值
+                    )
                 t2v_denoising_strength = gr.Slider(visible=False, minimum=0, maximum=1, step=0.1, label="去噪强度", value=1, interactive=True, show_reset_button=False)     
             with gr.Row():  
                 t2v_num_inference_steps = gr.Slider(minimum=1, maximum=75, step=1, label="迭代步数 (Steps)", value=25, interactive=True, show_reset_button=False)

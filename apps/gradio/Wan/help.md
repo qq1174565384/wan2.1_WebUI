@@ -5,10 +5,9 @@
 
 还使用了
 
-[TeaCache](https://github.com/ali-vilab/TeaCache) Timestep Embedding Aware Cache ，这是一种免训练缓存方法，可估计并利用不同时间步长模型输出之间的波动差异，从而加快推理速度。Wan2.1速度提高约 2 倍。
+[TeaCache](https://github.com/ali-vilab/TeaCache) Timestep Embedding Aware Cache ，这是一种免训练缓存方法，可估计并利用不同时间步长模型输出之间的波动差异，从而加快推理速度。
 
-[Flash Attention](https://github.com/Dao-AILab/flash-attention)具有 IO 感知的快速且节省内存的精确注意力计算。大幅节省显存使用，越大的计算量越明显。Wan2.1显存使用最低降低至6GB。之前12GB起步。
-
+[Flash Attention](https://github.com/Dao-AILab/flash-attention)具有 IO 感知的快速且节省内存的精确注意力计算。节省显存使用，越大的计算量越明显。
 
 
 ### 一些有用的参考

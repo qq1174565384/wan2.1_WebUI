@@ -83,12 +83,14 @@ if /i "%install_flash_attn%"=="Y" (
         pause
         exit /b 1
     )
-) else if /i "%install_flash_attn%"=="N" (
-    echo 跳过安装 flash-attn。
 ) else (
-    echo 输入无效，请输入 Y 或 N。
-    pause
-    exit /b 1
+    if /i "%install_flash_attn%"=="N" (
+        echo 跳过安装 flash-attn。
+    ) else (
+        echo 输入无效，请输入 Y 或 N。
+        pause
+        exit /b 1
+    )
 )
 
 echo 所有依赖安装成功！

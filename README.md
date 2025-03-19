@@ -56,6 +56,8 @@ python setup.py install
 
 #### 6，启动
 
+（默认您已经安装了cuda和cuda对应的torch版本），如果需要flash-attn加速，请自行安装flash-attn，或者参阅安装依赖.bat文件。
+
 
 双击  __Wan2.1WebUI.bat__
 

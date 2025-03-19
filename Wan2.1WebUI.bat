@@ -6,7 +6,7 @@ echo 当前目录: %cd%
 
 REM 激活虚拟环境
 if not exist ".wan2.1env\Scripts\activate" (
-    echo [错误] 虚拟环境激活脚本不存在
+    echo [错误] 虚拟环境不存在
     pause
     exit /b 1
 )

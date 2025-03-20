@@ -32,7 +32,7 @@ def create_t2v_ui():
                     allow_custom_value=True  # 允许用户输入自定义值
                 )
                 # 生成帧数
-                t2v_num_frames = gr.Number(label="生成帧数",choices=[
+                t2v_num_frames = gr.Dropdown(label="生成帧数",choices=[
                         33, 81, 121, 
                         153, 201
                     ],

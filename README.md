@@ -2,7 +2,7 @@
 
 #### 使用整合包
 ```
-链接准备中。。。
+链接: https://pan.baidu.com/s/1_RgQB-fSVtiuD7LBlGezfw?pwd=6gdt 提取码: 6gdt 
 ```
 
 

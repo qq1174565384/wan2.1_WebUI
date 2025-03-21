@@ -1,8 +1,8 @@
 import gradio as gr
 from t2v_ui import create_t2v_ui
-from t2v_button_events import setup_button_events
+from t2v_button_events import setup_button_events as t2v_button_events
 import requests
-
+from ModelManager import ModelManager
 # # 定义css样式
 custom_css = """
 /* 按钮样式 */
@@ -135,9 +135,18 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
                     # 视频到视频标签页
                     with gr.TabItem("视频生视频"):
                         with gr.Row():
-                            i2v_developing = gr.Textbox(show_label = False,label="开发中", value="施工中...", interactive=False)
+                            v2v_developing = gr.Textbox(show_label = False,label="开发中", value="施工中...", interactive=False)
+                    # 视频到视频标签页
+
+                    with gr.TabItem("模型管理"):
+                        with gr.Row():
+                            ModelManager()
+                    with gr.TabItem("Wan-Video LoRA训练"):
+                        with gr.Row():
+                            Wan_LoRA_training = gr.Textbox(show_label = False,label="开发中", value="施工中...", interactive=False)    
+
    # 设置按钮事件
-    setup_button_events(
+    t2v_button_events(
         run_t2v_button, run_t2v_button_Disable, t2v_prompt, t2v_negative_prompt, t2v_input_image, t2v_input_video,
         t2v_denoising_strength, t2v_seed, t2v_rand_device, t2v_resolution, t2v_num_frames, t2v_cfg_scale,
         t2v_num_inference_steps, t2v_sigma_shift, t2v_tiled, t2v_tile_size, t2v_tile_stride, output_fps, output_quality,
@@ -219,4 +228,4 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
             
 
 # 启动
-demo.launch(inbrowser=True, quiet=True, allowed_paths=["../../../output/t2v"])
+demo.launch(inbrowser=True, allowed_paths=["../../../output/t2v"])

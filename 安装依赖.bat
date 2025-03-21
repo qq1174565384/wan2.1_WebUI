@@ -7,7 +7,7 @@ echo 当前目录: %cd%
 echo 正在创建虚拟环境
 
 
-python -m venv .wan2.1env
+%USERPROFILE%\AppData\Local\Programs\Python\Python310\python.exe -m venv .wan2.1env
 
 echo 虚拟环境创建成功
 
@@ -40,7 +40,7 @@ if %errorlevel% neq 0 (
 
 REM 先更新pip
 echo 检查更新pip...
-python -m pip install --upgrade pip
+python -m pip install --upgrade pip -i https://mirrors.aliyun.com/pypi/simple/
 if %errorlevel% neq 0 (
     echo [错误] pip更新失败，错误码: %errorlevel%
     pause
@@ -50,22 +50,23 @@ if %errorlevel% neq 0 (
 pip cache purge
 
 echo 开始安装依赖...
-pip install .
+pip install . -i https://mirrors.aliyun.com/pypi/simple/
 if %errorlevel% neq 0 (
     echo [错误] 当前目录下的Python项目安装失败，错误码: %errorlevel%
     pause
     exit /b 1
 )
 
-pip install gradio
-pip install packaging
-pip install ninja
+pip install gradio -i https://mirrors.aliyun.com/pypi/simple/
+pip install packaging -i https://mirrors.aliyun.com/pypi/simple/
+pip install ninja -i https://mirrors.aliyun.com/pypi/simple/
 
+REM 注意：torch、torchvision 和 torchaudio 使用的是 PyTorch 官方源，这里不替换
 pip3 install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
 
 REM 确保安装 wheel 模块
 echo 正在检查并安装 wheel 模块...
-pip install wheel
+pip install wheel -i https://mirrors.aliyun.com/pypi/simple/
 if %errorlevel% neq 0 (
     echo [错误] wheel 模块安装失败，错误码: %errorlevel%
     pause

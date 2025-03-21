@@ -4,3 +4,4 @@ Wan-AI
 /output
 build
 diffsynth.egg-info
+/apps/gradio/Wan/.gitignore

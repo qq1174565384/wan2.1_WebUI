@@ -1,8 +1,10 @@
 import gradio as gr
 from t2v_ui import create_t2v_ui
-from t2v_button_events import setup_button_events as t2v_button_events
+from t2v_button_events import setup_t2v_button_events as t2v_button_events
+from i2v_ui import create_i2v_ui
+from i2v_button_events import setup_i2v_button_events as i2v_button_events
 import requests
-from ModelManager import ModelManager
+from ModelFileManager import  ModelFileManager
 # # 定义css样式
 custom_css = """
 /* 按钮样式 */
@@ -97,6 +99,11 @@ custom_css = """
     margin-top: 0px; /* 上边距 */
 }
 """
+# 加载模型状态
+t2v_model_state = False
+i2v_model_state = False
+v2v_model_state = False
+
 # # 创建 Gradio 界面
 with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
     # 显示一个 HTML 标题，居中、32px 字体大小、加粗，并在底部留出 20px 边距
@@ -129,8 +136,13 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
                            
                     # 图像到视频标签页
                     with gr.TabItem("图生视频"):
-                        with gr.Row():
-                            i2v_developing = gr.Textbox(show_label = False,label="开发中", value="施工中...", interactive=False)
+                        (   i2v_prompt, i2v_negative_prompt, i2v_input_image, i2v_input_video,
+                            i2v_denoising_strength, i2v_seed, i2v_rand_device, i2v_resolution,
+                            i2v_num_frames, i2v_cfg_scale, i2v_num_inference_steps, i2v_sigma_shift,
+                            i2v_tiled, i2v_tile_size, i2v_tile_stride, i2v_output_fps, i2v_output_quality,
+                            i2v_result_gallery, run_i2v_button, run_i2v_button_Disable,
+                            i2v_open_folder_button, i2v_history
+                        ) = create_i2v_ui()
                         
                     # 视频到视频标签页
                     with gr.TabItem("视频生视频"):
@@ -140,7 +152,7 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
 
                     with gr.TabItem("模型管理"):
                         with gr.Row():
-                            ModelManager()
+                            ModelFileManager()
                     with gr.TabItem("Wan-Video LoRA训练"):
                         with gr.Row():
                             Wan_LoRA_training = gr.Textbox(show_label = False,label="开发中", value="施工中...", interactive=False)    
@@ -151,6 +163,12 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
         t2v_denoising_strength, t2v_seed, t2v_rand_device, t2v_resolution, t2v_num_frames, t2v_cfg_scale,
         t2v_num_inference_steps, t2v_sigma_shift, t2v_tiled, t2v_tile_size, t2v_tile_stride, output_fps, output_quality,
         result_gallery, t2v_history, open_folder_button
+    )
+    i2v_button_events(
+        run_i2v_button, run_i2v_button_Disable, i2v_prompt, i2v_negative_prompt, i2v_input_image, i2v_input_video,
+        i2v_denoising_strength, i2v_seed, i2v_rand_device, i2v_resolution, i2v_num_frames, i2v_cfg_scale,
+        i2v_num_inference_steps, i2v_sigma_shift, i2v_tiled, i2v_tile_size, i2v_tile_stride, i2v_output_fps, i2v_output_quality,
+        i2v_result_gallery, i2v_history, i2v_open_folder_button
     )
     # 显示github上md文件的内容
     with gr.Row():
@@ -228,4 +246,4 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
             
 
 # 启动
-demo.launch(inbrowser=True, allowed_paths=["../../../output/t2v"])
+demo.launch(inbrowser=True, allowed_paths=["../../../output/t2v","../../../output/i2v"])

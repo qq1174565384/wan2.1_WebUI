@@ -327,6 +327,8 @@ class ModelManager:
         self.model = []
         self.model_path = []
         self.model_name = []
+        # 存储已加载模型和路径的组合，避免重复加载
+        self.loaded_models = set()
         downloaded_files = download_models(model_id_list, downloading_priority) if len(model_id_list) > 0 else []
         self.model_detector = [
             ModelDetectorFromSingleFile(model_loader_configs),
@@ -396,6 +398,15 @@ class ModelManager:
         print(f"Loading models from: {file_path}")
         if device is None: device = self.device
         if torch_dtype is None: torch_dtype = self.torch_dtype
+        # 检查模型是否已经加载
+        if isinstance(file_path, list):
+            file_path_key = tuple(sorted(file_path))
+        else:
+            file_path_key = file_path
+        if file_path_key in self.loaded_models:
+            print(f"Models from {file_path} are already loaded. Skipping.")
+            return
+
         if isinstance(file_path, list):
             state_dict = {}
             for path in file_path:
@@ -416,6 +427,8 @@ class ModelManager:
                     self.model_path.append(file_path)
                     self.model_name.append(model_name)
                 print(f"    The following models are loaded: {model_names}.")
+                # 标记模型已加载
+                self.loaded_models.add(file_path_key)
                 break
         else:
             print(f"    We cannot detect the model type. No models are loaded.")

@@ -10,34 +10,9 @@ from datetime import datetime
 # 获取项目根目录的绝对路径
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
 
-# 加载模型
-model_paths = [
-    os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "diffusion_pytorch_model.safetensors"),
-    os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "models_t5_umt5-xxl-enc-bf16.pth"),
-    os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "Wan2.1_VAE.pth"),
-]
 
-for path in model_paths:
-    if not os.path.exists(path):
-        print(f"模型文件 {path} 不存在，请检查路径。")
-        raise FileNotFoundError(f"模型文件 {path} 不存在，请检查路径。")
-
-model_manager = ModelManager(device="cpu")
-try:
-    model_manager.load_models(
-        model_paths,
-        torch_dtype=torch.bfloat16,  # You can set `torch_dtype=torch.float8_e4m3fn` to enable FP8 quantization.
-    )
-except Exception as e:
-    print(f"模型加载失败: {e}")
-    # 可以根据具体情况进行进一步处理，例如退出程序或重试
-    raise
-
-# 创建管道
-pipe = WanVideoPipeline.from_model_manager(model_manager, torch_dtype=torch.bfloat16, device="cuda")
-pipe.enable_vram_management(num_persistent_param_in_dit=None)
-
-
+t2v_model_state = False  # 初始化模型状态为 False
+i2v_model_state = False  # 初始化模型状态为 False
 # 定义t2v函数
 def generate_video_from_text(
     t2v_prompt="",  # 设置默认值为空字符串,
@@ -58,6 +33,43 @@ def generate_video_from_text(
     output_fps=15,
     output_quality=9,
 ):
+    global t2v_model_state,i2v_model_state, i2v_model_manager, i2v_pipe,i2v_model_paths, t2v_model_manager, t2v_pipe,t2v_model_paths
+    # 加载模型
+    if not t2v_model_state:
+        i2v_model_manager = None
+        i2v_pipe = None
+
+        print("正在加载模型...")
+        t2v_model_paths = [
+            os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "diffusion_pytorch_model.safetensors"),
+            os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "models_t5_umt5-xxl-enc-bf16.pth"),
+            os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "Wan2.1_VAE.pth"),
+        ]
+
+        for path in t2v_model_paths:
+            if not os.path.exists(path):
+                print(f"模型文件 {path} 不存在，请检查路径。")
+                raise FileNotFoundError(f"模型文件 {path} 不存在，请检查路径。")
+
+        t2v_model_manager = ModelManager(device="cpu")
+        try:
+            t2v_model_manager.load_models(
+                t2v_model_paths,
+                torch_dtype=torch.bfloat16,  # You can set `torch_dtype=torch.float8_e4m3fn` to enable FP8 quantization.
+            )
+        except Exception as e:
+            print(f"模型加载失败: {e}")
+            # 可以根据具体情况进行进一步处理，例如退出程序或重试
+            raise
+
+        # 创建管道
+        t2v_pipe = WanVideoPipeline.from_model_manager(t2v_model_manager, torch_dtype=torch.bfloat16, device="cuda")
+        t2v_pipe.enable_vram_management(num_persistent_param_in_dit=None)
+        pass
+    i2v_model_state = False
+    t2v_model_state = True
+
+    # 处理输入参数
     t2v_seed = t2v_seed if t2v_seed >= 0 else random.randint(0, 2147483647)
     # 确保 t2v_resolution 是字符串类型
     t2v_resolution = str(t2v_resolution)
@@ -70,7 +82,7 @@ def generate_video_from_text(
     t2v_tile_stride = ast.literal_eval(t2v_tile_stride)
     print("正在生成视频...")
     try:
-        t2v = pipe(
+        t2v = t2v_pipe(
             prompt=t2v_prompt,
             negative_prompt=t2v_negative_prompt,
             input_image=t2v_input_image,
@@ -87,9 +99,7 @@ def generate_video_from_text(
             tiled=t2v_tiled,
             tile_size=t2v_tile_size,
             tile_stride=t2v_tile_stride,
-            # TeaCache parameters
-            tea_cache_l1_thresh=0.05, # The larger this value is, the faster the speed, but the worse the visual quality.
-            tea_cache_model_id="Wan2.1-T2V-1.3B", # Choose one in (Wan2.1-T2V-1.3B, Wan2.1-T2V-14B, Wan2.1-I2V-14B-480P, Wan2.1-I2V-14B-720P).
+            
         )
     except Exception as e:
         print(f"视频生成失败: {e}")
@@ -150,8 +160,8 @@ def generate_video_from_text(
 
 # 定义i2v函数
 def generate_video_from_image(
-    i2v_prompt,
-    i2v_negative_prompt,
+    i2v_prompt="",  # 设置默认值为空字符串,
+    i2v_negative_prompt="",  # 设置默认值为空字符串
     i2v_input_image=None,  # 设置默认值为 None
     i2v_input_video=None,  # 设置默认值为 None
     i2v_denoising_strength=1,  # 设置默认值为 1
@@ -166,22 +176,61 @@ def generate_video_from_image(
     i2v_tile_size="(30, 52)",  # 设置默认值为 "(30, 52)"
     i2v_tile_stride="(15, 26)",  # 设置默认值为 "(15, 26)"
     output_fps=15,
-    output_quality=9
-    ):
+    output_quality=9,
+):
+    global t2v_model_state,i2v_model_state, i2v_model_manager, i2v_pipe,i2v_model_paths, t2v_model_manager, t2v_pipe,t2v_model_paths
+    # 加载模型
+    if not i2v_model_state:
+        t2v_model_manager = None
+        t2v_pipe = None
+        print("正在加载模型...")
+        os.chdir(project_root)
+        i2v_model_manager = ModelManager(device="cpu")
+        i2v_model_manager.load_models(
+            ["models/Wan-AI/Wan2.1-I2V-14B-480P/models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth"],
+            torch_dtype=torch.float32, # Image Encoder is loaded with float32
+        )
+        i2v_model_manager.load_models(
+        [
+            [
+                "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00001-of-00007.safetensors",
+                "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00002-of-00007.safetensors",
+                "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00003-of-00007.safetensors",
+                "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00004-of-00007.safetensors",
+                "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00005-of-00007.safetensors",
+                "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00006-of-00007.safetensors",
+                "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00007-of-00007.safetensors",
+            ],
+            "models/Wan-AI/Wan2.1-I2V-14B-480P/models_t5_umt5-xxl-enc-bf16.pth",
+            "models/Wan-AI/Wan2.1-I2V-14B-480P/Wan2.1_VAE.pth",
+        ],
+        torch_dtype=torch.bfloat16, # You can set `torch_dtype=torch.float8_e4m3fn` to enable FP8 quantization.
+        )
+
+        # 创建管道
+        i2v_pipe = WanVideoPipeline.from_model_manager(i2v_model_manager, torch_dtype=torch.bfloat16, device="cuda")
+        i2v_pipe.enable_vram_management(num_persistent_param_in_dit=6*10**9) # You can set `num_persistent_param_in_dit` to a small number to reduce VRAM required.
+        pass
+
+    t2v_model_state = False
+    i2v_model_state = True
+    
+
+
+    # 处理输入参数
     i2v_seed = i2v_seed if i2v_seed >= 0 else random.randint(0, 2147483647)
     # 确保 i2v_resolution 是字符串类型
     i2v_resolution = str(i2v_resolution)
-    # 解析分辨率
-    try:
-        i2v_width, i2v_height = map(int, i2v_resolution.split('*'))
-    except (ValueError, IndexError):
-        i2v_width, i2v_height = 1280, 720  # 使用默认值
+   
+    
+    i2v_width, i2v_height = map(int, i2v_resolution.split('*'))
+    
     # 使用 ast.literal_eval 替代 eval
     i2v_tile_size = ast.literal_eval(i2v_tile_size)
     i2v_tile_stride = ast.literal_eval(i2v_tile_stride)
-
+    print("正在生成视频...")
     try:
-        i2v = pipe(
+        i2v = i2v_pipe(
             prompt=i2v_prompt,
             negative_prompt=i2v_negative_prompt,
             input_image=i2v_input_image,
@@ -198,6 +247,8 @@ def generate_video_from_image(
             tiled=i2v_tiled,
             tile_size=i2v_tile_size,
             tile_stride=i2v_tile_stride,
+            # TeaCache parameters
+
         )
     except Exception as e:
         print(f"视频生成失败: {e}")
@@ -207,13 +258,16 @@ def generate_video_from_image(
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    
     # Generate unique filename based on current timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     video_filename = f"Wan2_1_i2v_{timestamp}.mp4"
     video_path = os.path.join(output_dir, video_filename)
-    
+    print("正在保存视频...")
     save_video(i2v, video_path, fps=output_fps, quality=output_quality)
-
+    print("正在保存预览图...")
     # Save preview image
     import cv2
     from PIL import Image
@@ -224,9 +278,9 @@ def generate_video_from_image(
         preview_image = Image.fromarray(frame)
         preview_path = os.path.join(output_dir, f"{os.path.splitext(video_filename)[0]}.jpg")
         preview_image.save(preview_path)
-
-    # 保存参数到文本文件
-    params = { 
+    print("正在保存参数文件...")
+    # Save parameters to a text file
+    params = {
                 "prompt": i2v_prompt,
                 "negative_prompt": i2v_negative_prompt,
                 "input_image": i2v_input_image,
@@ -250,9 +304,7 @@ def generate_video_from_image(
     with open(param_path, 'w', encoding='utf-8') as f:
         for key, value in params.items():
             f.write(f"{key}: {value}\n")
-
-    
-   
+    print("任务成功")
     return video_path
 
 

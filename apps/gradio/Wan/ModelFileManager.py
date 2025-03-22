@@ -4,7 +4,7 @@ import os
 # 获取项目根目录的绝对路径
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 
-def ModelManager():
+def ModelFileManager():
     with gr.Row():
         # 参数调节
         # Download models
@@ -24,7 +24,7 @@ def ModelManager():
             # 移除多余逗号
             local_dir_1 = os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B")
             exist_1 = check_model_exist(local_dir_1)
-            status_text_1 = gr.Textbox(value="已存在" if exist_1 else "未存在", label=f"{model_id_1} (文生图用）状态", interactive=False)
+            status_text_1 = gr.Textbox(value="已存在" if exist_1 else "未存在", label=f"{model_id_1} (文生视频用）状态", interactive=False)
             download_btn_1 = gr.Button(value="下载", interactive=not exist_1)
             open_btn_1 = gr.Button(value="打开所在文件夹", interactive=exist_1)
             local_dir_state_1 = gr.State(value=local_dir_1)
@@ -41,7 +41,7 @@ def ModelManager():
             # 移除多余逗号和重复路径
             local_dir_3 = os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-14B")
             exist_3 = check_model_exist(local_dir_3)
-            status_text_3 = gr.Textbox(value="已存在" if exist_3 else "未存在", label=f"{model_id_3} (图生图用）状态", interactive=False)
+            status_text_3 = gr.Textbox(value="已存在" if exist_3 else "未存在", label=f"{model_id_3} (暂时没用）状态", interactive=False)
             download_btn_3 = gr.Button(value="下载", interactive=not exist_3)
             open_btn_3 = gr.Button(value="打开所在文件夹", interactive=exist_3)
             local_dir_state_3 = gr.State(value=local_dir_3)
@@ -57,7 +57,7 @@ def ModelManager():
             # 移除多余逗号和重复路径
             local_dir_2 = os.path.join(project_root, "models", "Wan-AI", "Wan2.1-I2V-14B-480P")
             exist_2 = check_model_exist(local_dir_2)
-            status_text_2 = gr.Textbox(value="已存在" if exist_2 else "未存在", label=f"{model_id_2} (暂时没用）状态", interactive=False)
+            status_text_2 = gr.Textbox(value="已存在" if exist_2 else "未存在", label=f"{model_id_2} 图生视频用）状态", interactive=False)
             download_btn_2 = gr.Button(value="下载", interactive=not exist_2)
             open_btn_2 = gr.Button(value="打开所在文件夹", interactive=exist_2)
             local_dir_state_2 = gr.State(value=local_dir_2)

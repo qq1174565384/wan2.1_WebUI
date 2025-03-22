@@ -1,8 +1,8 @@
 import gradio as gr
 from function.history import load_t2v_history
-from function.video_generation import generate_video_from_text, generate_video_from_image, generate_video_from_video
-from function.open_output_folder import open_output_folder
-def setup_button_events(
+from function.video_generation import generate_video_from_text
+from function.open_output_folder import t2v_open_output_folder
+def setup_t2v_button_events(
     run_t2v_button, run_t2v_button_Disable, t2v_prompt, t2v_negative_prompt, t2v_input_image, t2v_input_video,
     t2v_denoising_strength, t2v_seed, t2v_rand_device, t2v_resolution, t2v_num_frames, t2v_cfg_scale,
     t2v_num_inference_steps, t2v_sigma_shift, t2v_tiled, t2v_tile_size, t2v_tile_stride, output_fps, output_quality,
@@ -68,7 +68,7 @@ def setup_button_events(
 
     # 绑定按钮点击事件
     open_folder_button.click(
-        fn=open_output_folder
+        fn=t2v_open_output_folder
     )
 
     return generation_state

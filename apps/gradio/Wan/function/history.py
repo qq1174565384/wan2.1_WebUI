@@ -9,6 +9,9 @@ def load_t2v_history():
     :return: 包含prompt和MP4文件路径的二维列表
     """
     t2v_dir = os.path.join(project_root, 'output', 't2v')
+    # 检查目录是否存在，如果不存在则创建
+    if not os.path.exists(t2v_dir):
+        os.makedirs(t2v_dir)
     # 获取所有MP4文件
     mp4_files = [f for f in os.listdir(t2v_dir) if f.endswith('.mp4')]
     # 按创建时间降序排序
@@ -43,6 +46,9 @@ def load_i2v_history():
     :return: 包含prompt和MP4文件路径的二维列表
     """
     i2v_dir = os.path.join(project_root, 'output', 'i2v')
+    # 检查目录是否存在，如果不存在则创建
+    if not os.path.exists(i2v_dir):
+        os.makedirs(i2v_dir)
     # 获取所有MP4文件
     mp4_files = [f for f in os.listdir(i2v_dir) if f.endswith('.mp4')]
     # 按创建时间降序排序

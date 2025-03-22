@@ -1,3 +1,4 @@
+import os
 import gradio as gr
 from t2v_ui import create_t2v_ui
 from t2v_button_events import setup_t2v_button_events as t2v_button_events
@@ -5,6 +6,7 @@ from i2v_ui import create_i2v_ui
 from i2v_button_events import setup_i2v_button_events as i2v_button_events
 import requests
 from ModelFileManager import  ModelFileManager
+
 # # 定义css样式
 custom_css = """
 /* 按钮样式 */
@@ -91,7 +93,6 @@ custom_css = """
 }
 
 #custom-checkbox label {
-    color: #f8f9fa; /* 文本颜色 */
     font-size: 15px;
     height: 70px; 
     cursor: pointer;

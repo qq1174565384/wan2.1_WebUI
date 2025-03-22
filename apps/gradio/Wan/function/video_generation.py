@@ -99,7 +99,9 @@ def generate_video_from_text(
             tiled=t2v_tiled,
             tile_size=t2v_tile_size,
             tile_stride=t2v_tile_stride,
-            
+            # TeaCache parameters
+            # tea_cache_l1_thresh=0.05, # The larger this value is, the faster the speed, but the worse the visual quality.
+            # tea_cache_model_id="Wan2.1-T2V-1.3B", # Choose one in (Wan2.1-T2V-1.3B, Wan2.1-T2V-14B, Wan2.1-I2V-14B-480P, Wan2.1-I2V-14B-720P).
         )
     except Exception as e:
         print(f"视频生成失败: {e}")

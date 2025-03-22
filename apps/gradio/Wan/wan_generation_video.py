@@ -135,7 +135,7 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
                                 
                            
                     # 图像到视频标签页
-                    with gr.TabItem("图生视频"):
+                    with gr.TabItem("图生视频（施工中）"):
                         (   i2v_prompt, i2v_negative_prompt, i2v_input_image, i2v_input_video,
                             i2v_denoising_strength, i2v_seed, i2v_rand_device, i2v_resolution,
                             i2v_num_frames, i2v_cfg_scale, i2v_num_inference_steps, i2v_sigma_shift,

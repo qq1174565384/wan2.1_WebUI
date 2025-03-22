@@ -177,10 +177,11 @@ def generate_video_from_image(
     i2v_tiled=True,  # 设置默认值为 True
     i2v_tile_size="(30, 52)",  # 设置默认值为 "(30, 52)"
     i2v_tile_stride="(15, 26)",  # 设置默认值为 "(15, 26)"
-    output_fps=15,
-    output_quality=9,
+    i2v_output_fps=15,
+    i2v_output_quality=9,
+    i2v_num_persistent_param_in_dit=0
 ):
-    global t2v_model_state,i2v_model_state, i2v_model_manager, i2v_pipe,i2v_model_paths, t2v_model_manager, t2v_pipe,t2v_model_paths
+    global t2v_model_state,i2v_model_state, i2v_model_manager, i2v_pipe, t2v_model_manager, t2v_pipe,t2v_model_paths
     # 加载模型
     if not i2v_model_state:
         t2v_model_manager = None
@@ -195,14 +196,14 @@ def generate_video_from_image(
         i2v_model_manager.load_models(
         [
             [
-                "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00001-of-00007.safetensors",
-                "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00002-of-00007.safetensors",
-                "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00003-of-00007.safetensors",
-                "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00004-of-00007.safetensors",
-                "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00005-of-00007.safetensors",
-                "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00006-of-00007.safetensors",
-                "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00007-of-00007.safetensors",
-            ],
+            "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00001-of-00007.safetensors",
+            "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00002-of-00007.safetensors",
+            "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00003-of-00007.safetensors",
+            "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00004-of-00007.safetensors",
+            "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00005-of-00007.safetensors",
+            "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00006-of-00007.safetensors",
+            "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00007-of-00007.safetensors",
+        ],
             "models/Wan-AI/Wan2.1-I2V-14B-480P/models_t5_umt5-xxl-enc-bf16.pth",
             "models/Wan-AI/Wan2.1-I2V-14B-480P/Wan2.1_VAE.pth",
         ],
@@ -211,7 +212,7 @@ def generate_video_from_image(
 
         # 创建管道
         i2v_pipe = WanVideoPipeline.from_model_manager(i2v_model_manager, torch_dtype=torch.bfloat16, device="cuda")
-        i2v_pipe.enable_vram_management(num_persistent_param_in_dit=6*10**9) # You can set `num_persistent_param_in_dit` to a small number to reduce VRAM required.
+        i2v_pipe.enable_vram_management(num_persistent_param_in_dit= i2v_num_persistent_param_in_dit) # You can set `num_persistent_param_in_dit` to a small number to reduce VRAM required.
         pass
 
     t2v_model_state = False
@@ -221,37 +222,29 @@ def generate_video_from_image(
 
     # 处理输入参数
     i2v_seed = i2v_seed if i2v_seed >= 0 else random.randint(0, 2147483647)
-    # 确保 i2v_resolution 是字符串类型
+
+    # 确保 t2v_resolution 是字符串类型
     i2v_resolution = str(i2v_resolution)
    
     
     i2v_width, i2v_height = map(int, i2v_resolution.split('*'))
     
-    # 使用 ast.literal_eval 替代 eval
-    i2v_tile_size = ast.literal_eval(i2v_tile_size)
-    i2v_tile_stride = ast.literal_eval(i2v_tile_stride)
     print("正在生成视频...")
     try:
         i2v = i2v_pipe(
             prompt=i2v_prompt,
             negative_prompt=i2v_negative_prompt,
             input_image=i2v_input_image,
-            input_video=i2v_input_video,
-            denoising_strength=i2v_denoising_strength,
             seed=int(i2v_seed),
-            rand_device=i2v_rand_device,
             height=int(i2v_height),
             width=int(i2v_width),
             num_frames=int(i2v_num_frames),
-            cfg_scale=i2v_cfg_scale,
             num_inference_steps=int(i2v_num_inference_steps),
-            sigma_shift=i2v_sigma_shift,
             tiled=i2v_tiled,
-            tile_size=i2v_tile_size,
-            tile_stride=i2v_tile_stride,
-            # TeaCache parameters
 
         )
+
+
     except Exception as e:
         print(f"视频生成失败: {e}")
         i2v = None
@@ -268,7 +261,7 @@ def generate_video_from_image(
     video_filename = f"Wan2_1_i2v_{timestamp}.mp4"
     video_path = os.path.join(output_dir, video_filename)
     print("正在保存视频...")
-    save_video(i2v, video_path, fps=output_fps, quality=output_quality)
+    save_video(i2v, video_path, fps=i2v_output_fps, quality=i2v_output_quality)
     print("正在保存预览图...")
     # Save preview image
     import cv2
@@ -285,20 +278,11 @@ def generate_video_from_image(
     params = {
                 "prompt": i2v_prompt,
                 "negative_prompt": i2v_negative_prompt,
-                "input_image": i2v_input_image,
-                "input_video": i2v_input_video,
-                "denoising_strength": i2v_denoising_strength,
+                "input_image": "file",
                 "seed": i2v_seed,
-                "rand_device": i2v_rand_device,
-                "height": i2v_height,
-                "width": i2v_width,
                 "num_frames": i2v_num_frames,
-                "cfg_scale": i2v_cfg_scale,
                 "num_inference_steps": i2v_num_inference_steps,
-                "sigma_shift": i2v_sigma_shift,
-                "tiled": i2v_tiled,
-                "tile_size": i2v_tile_size,
-                "tile_stride": i2v_tile_stride,
+ 
     }
     param_filename = f"Wan2_1_i2v_{timestamp}.txt"
     param_path = os.path.join(output_dir, param_filename)

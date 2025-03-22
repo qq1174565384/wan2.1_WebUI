@@ -76,7 +76,7 @@ def create_t2v_ui():
                     output_quality =  gr.Slider(minimum=1, maximum=10, step=1, label="保存质量", value=9)
                 with gr.Column(min_width=1):
                     # 定义一个按钮，用于打开输出文件夹
-                    open_folder_button = gr.Button("打开输出文件夹", elem_id="button2")       
+                    t2v_open_folder_button = gr.Button("打开输出文件夹", elem_id="button2")       
         
             with gr.Row():
                 # 添加参数展示文本框
@@ -106,4 +106,4 @@ def create_t2v_ui():
                                   examples_per_page = 5
                                   )
     
-    return t2v_prompt, t2v_negative_prompt, t2v_input_image, t2v_input_video, t2v_denoising_strength, t2v_seed, t2v_rand_device, t2v_resolution, t2v_num_frames, t2v_cfg_scale, t2v_num_inference_steps, t2v_sigma_shift, t2v_tiled, t2v_tile_size, t2v_tile_stride, output_fps, output_quality, result_gallery, run_t2v_button, run_t2v_button_Disable, open_folder_button, t2v_history
+    return t2v_prompt, t2v_negative_prompt, t2v_input_image, t2v_input_video, t2v_denoising_strength, t2v_seed, t2v_rand_device, t2v_resolution, t2v_num_frames, t2v_cfg_scale, t2v_num_inference_steps, t2v_sigma_shift, t2v_tiled, t2v_tile_size, t2v_tile_stride, output_fps, output_quality, result_gallery, run_t2v_button, run_t2v_button_Disable, t2v_open_folder_button, t2v_history

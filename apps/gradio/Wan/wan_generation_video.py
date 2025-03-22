@@ -1,9 +1,9 @@
 import os
 import gradio as gr
 from t2v_ui import create_t2v_ui
-from t2v_button_events import setup_t2v_button_events as t2v_button_events
+from t2v_button_events import setup_t2v_button_events 
 from i2v_ui import create_i2v_ui
-from i2v_button_events import setup_i2v_button_events as i2v_button_events
+from i2v_button_events import setup_i2v_button_events 
 import requests
 from ModelFileManager import  ModelFileManager
 
@@ -56,6 +56,20 @@ custom_css = """
     background-color: #2c3136; /* 更深的暗灰色背景 */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); /* 增强阴影效果 */
 }
+#button3 {
+    background-color: #2c3136; /* 暗蓝色背景 */
+    height: 78px; /* 设置按钮高度 */
+    width: 100px; /* 设置按钮宽度 */
+    border-radius: 4px;
+}
+
+#button3:hover {
+    background-color: #2c3136; /* 更深的暗灰色背景 */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); /* 增强阴影效果 */
+}
+
+
+
 
 /* 复选框样式 */
 #custom-checkbox input[type="checkbox"] {
@@ -131,7 +145,7 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
                             t2v_num_frames, t2v_cfg_scale, t2v_num_inference_steps, t2v_sigma_shift,
                             t2v_tiled, t2v_tile_size, t2v_tile_stride, output_fps, output_quality,
                             result_gallery, run_t2v_button, run_t2v_button_Disable,
-                            open_folder_button, t2v_history
+                            t2v_open_folder_button, t2v_history
                         ) = create_t2v_ui()
                                 
                            
@@ -142,7 +156,7 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
                             i2v_num_frames, i2v_cfg_scale, i2v_num_inference_steps, i2v_sigma_shift,
                             i2v_tiled, i2v_tile_size, i2v_tile_stride, i2v_output_fps, i2v_output_quality,
                             i2v_result_gallery, run_i2v_button, run_i2v_button_Disable,
-                            i2v_open_folder_button, i2v_history
+                            i2v_open_folder_button, i2v_history,i2v_num_persistent_param_in_dit
                         ) = create_i2v_ui()
                         
                     # 视频到视频标签页
@@ -159,17 +173,17 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
                             Wan_LoRA_training = gr.Textbox(show_label = False,label="开发中", value="施工中...", interactive=False)    
 
    # 设置按钮事件
-    t2v_button_events(
+    setup_t2v_button_events(
         run_t2v_button, run_t2v_button_Disable, t2v_prompt, t2v_negative_prompt, t2v_input_image, t2v_input_video,
         t2v_denoising_strength, t2v_seed, t2v_rand_device, t2v_resolution, t2v_num_frames, t2v_cfg_scale,
         t2v_num_inference_steps, t2v_sigma_shift, t2v_tiled, t2v_tile_size, t2v_tile_stride, output_fps, output_quality,
-        result_gallery, t2v_history, open_folder_button
+        result_gallery, t2v_history, t2v_open_folder_button
     )
-    i2v_button_events(
+    setup_i2v_button_events(
         run_i2v_button, run_i2v_button_Disable, i2v_prompt, i2v_negative_prompt, i2v_input_image, i2v_input_video,
         i2v_denoising_strength, i2v_seed, i2v_rand_device, i2v_resolution, i2v_num_frames, i2v_cfg_scale,
         i2v_num_inference_steps, i2v_sigma_shift, i2v_tiled, i2v_tile_size, i2v_tile_stride, i2v_output_fps, i2v_output_quality,
-        i2v_result_gallery, i2v_history, i2v_open_folder_button
+        i2v_result_gallery, i2v_history, i2v_open_folder_button,i2v_num_persistent_param_in_dit
     )
     # 显示github上md文件的内容
     with gr.Row():

@@ -1,14 +1,34 @@
 import gradio as gr
 
+def calculate_resolution(image):
+    if image is None:
+        return "832*480"  # 默认值
+    width, height = image.size
+    max_size = 832
+    if width > height:
+        new_width = max_size
+        new_height = int(height * (max_size / width))
+    else:
+        new_height = max_size
+        new_width = int(width * (max_size / height))
+    return f"{new_width}*{new_height}"
+
+
 def create_i2v_ui():
     with gr.Row():
         # 参数调节
         with gr.Column():
+
             with gr.Row():
+
                 i2v_input_image = gr.Image(label="输入图像", type="pil", value=None, visible=True)
+
             with gr.Row():
+                #定义一个按钮，点击后根据图片反推提示词
+                i2v_inference_prompt = gr.Button("反推提示词（施工中）", elem_id="button3",scale=1)   
+            with gr.Row():   
                 # 定义一个文本框，用于输入文本到视频的提示词
-                i2v_prompt = gr.Textbox(
+                i2v_prompt = gr.Textbox(scale=3,
                     label="正面提示词",
                     value="",
                     placeholder="请输入提示词",
@@ -22,16 +42,17 @@ def create_i2v_ui():
                     lines=5,
                 )
             with gr.Row():
-                # 定义一个下拉选择框，用于选择视频分辨率
-                i2v_resolution = gr.Dropdown(
+                # 根据i2v_input_image输入图片的比例来设定分辨率
+                i2v_resolution = gr.Textbox(
                     label="分辨率",
-                    choices=[
-                        "480*832", "832*480", "720*1280", 
-                        "1280*720", "960*960", "720*1280",
-                        "1088*832", "832*1088"
-                    ],
-                    value="832*480",
-                    allow_custom_value=True  # 允许用户输入自定义值
+                    value=calculate_resolution(i2v_input_image.value),
+                    interactive=True,
+                    visible=False
+                )
+                i2v_input_image.change(
+                    fn=calculate_resolution,
+                    inputs=i2v_input_image,
+                    outputs=i2v_resolution
                 )
                 # 生成帧数
                 i2v_num_frames = gr.Dropdown(label="生成帧数",choices=[
@@ -45,8 +66,7 @@ def create_i2v_ui():
             with gr.Row():  
                 i2v_num_inference_steps = gr.Slider(minimum=1, maximum=75, step=1, label="迭代步数 (Steps)", value=25, interactive=True, show_reset_button=False)
             with gr.Row():   
-                i2v_cfg_scale = gr.Slider(minimum=1, maximum=30, step=0.1, label="提示词引导系数 (CFG Scale)", value=5, interactive=True, show_reset_button=False)
-                i2v_input_image = gr.Image(label="输入图像", type="pil", value=None, visible=False)
+                i2v_cfg_scale = gr.Slider(minimum=1, maximum=30, step=0.1, label="提示词引导系数 (CFG Scale)", value=5, interactive=True, show_reset_button=False,visible=False)
                 i2v_input_video = gr.Video(label="输入视频", value=None, visible=False)
                 i2v_rand_device = gr.Textbox(value="cuda", label="随机设备", placeholder="cuda or cpu", interactive=True, visible=False) 
                 i2v_sigma_shift = gr.Slider(visible=False, label="Sigma Shift", value=5)
@@ -55,6 +75,10 @@ def create_i2v_ui():
                 i2v_tile_size = gr.Textbox(visible=True, label="分块大小(tile_size)", value="(30, 52)", interactive=True)
                 i2v_tile_stride = gr.Textbox(visible=True, label="分块步长(tile_stride)", value="(15, 26)", interactive=True)    
                 i2v_tiled = gr.Checkbox(label="  分块生成（减少显存使用）", value=True, elem_id="custom-checkbox")    
+            with gr.Row():     
+                i2v_num_persistent_param_in_dit = gr.Slider(
+                   minimum=0, maximum=64000000000, step=1000000000, label="num_persistent_param_in_dit ", value=0, interactive=True
+                )
             with gr.Row():  
                 with gr.Column(scale=1, min_width=1): 
                     i2v_seed = gr.Number(label="随机数种子 (Seed)", value=-1)
@@ -95,6 +119,7 @@ def create_i2v_ui():
                         - **tile_size**：分块的大小，以元组形式表示，例如 (30, 52) 表示分块的高度和宽度。
                         - **tile_stride**：分块的步长，同样以元组形式表示，用于控制分块之间的重叠程度。
                         - **分块生成**：可以减少显存的使用，特别是在处理大尺寸图像或视频时。
+                        - **num_persistent_param_in_dit**：设置持久化参数的大小，单位为字节。（越大越占显存，生成速度越快）
                         """,
                         label="生成参数帮助",
                     )
@@ -109,4 +134,4 @@ def create_i2v_ui():
                                   examples_per_page = 5
                                   )
     
-    return i2v_prompt, i2v_negative_prompt, i2v_input_image, i2v_input_video, i2v_denoising_strength, i2v_seed, i2v_rand_device, i2v_resolution, i2v_num_frames, i2v_cfg_scale, i2v_num_inference_steps, i2v_sigma_shift, i2v_tiled, i2v_tile_size, i2v_tile_stride, i2v_output_fps, i2v_output_quality, i2v_result_gallery, run_i2v_button, run_i2v_button_Disable, i2v_open_folder_button, i2v_history
+    return i2v_prompt, i2v_negative_prompt, i2v_input_image, i2v_input_video, i2v_denoising_strength, i2v_seed, i2v_rand_device, i2v_resolution, i2v_num_frames, i2v_cfg_scale, i2v_num_inference_steps, i2v_sigma_shift, i2v_tiled, i2v_tile_size, i2v_tile_stride, i2v_output_fps, i2v_output_quality, i2v_result_gallery, run_i2v_button, run_i2v_button_Disable, i2v_open_folder_button, i2v_history,i2v_num_persistent_param_in_dit

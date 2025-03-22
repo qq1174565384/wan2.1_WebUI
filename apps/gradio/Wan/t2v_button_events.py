@@ -6,7 +6,7 @@ def setup_t2v_button_events(
     run_t2v_button, run_t2v_button_Disable, t2v_prompt, t2v_negative_prompt, t2v_input_image, t2v_input_video,
     t2v_denoising_strength, t2v_seed, t2v_rand_device, t2v_resolution, t2v_num_frames, t2v_cfg_scale,
     t2v_num_inference_steps, t2v_sigma_shift, t2v_tiled, t2v_tile_size, t2v_tile_stride, output_fps, output_quality,
-    result_gallery, t2v_history, open_folder_button
+    result_gallery, t2v_history, t2v_open_folder_button
 ):
     generation_state = gr.Checkbox(value=False, visible=False)
 
@@ -67,7 +67,7 @@ def setup_t2v_button_events(
 
 
     # 绑定按钮点击事件
-    open_folder_button.click(
+    t2v_open_folder_button.click(
         fn=t2v_open_output_folder
     )
 

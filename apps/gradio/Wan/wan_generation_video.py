@@ -50,6 +50,13 @@ custom_css = """
     background-color: #2263dd; /* 暗蓝色背景 */
     height: 78px; /* 设置按钮高度 */
     border-radius: 4px;
+    color: #f8f9fa; /* 浅灰色文字 */
+    padding: 12px 24px;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 添加轻微阴影 */
 }
 
 #button2:hover {
@@ -58,6 +65,7 @@ custom_css = """
 }
 #button3 {
     background-color: #2c3136; /* 暗蓝色背景 */
+    color: #f8f9fa; /* 浅灰色文字 */
     height: 78px; /* 设置按钮高度 */
     width: 100px; /* 设置按钮宽度 */
     border-radius: 4px;
@@ -65,6 +73,7 @@ custom_css = """
 
 #button3:hover {
     background-color: #2c3136; /* 更深的暗灰色背景 */
+    
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); /* 增强阴影效果 */
 }
 

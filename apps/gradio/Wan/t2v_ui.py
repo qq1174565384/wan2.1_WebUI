@@ -6,12 +6,17 @@ def create_t2v_ui():
         with gr.Column():
             with gr.Row():
                 # 定义一个文本框，用于输入文本到视频的提示词
-                t2v_prompt = gr.Textbox(
+                t2v_prompt = gr.Textbox(scale=4,
                     label="正面提示词",
                     value="特写镜头|视频中，镜头面对一位动漫女仆的脸庞，柔和的光线洒在她的皮肤上，勾勒出细腻的轮廓，镜头缓缓环绕拉远，在废墟中展示出了她带血的全身，勾线动画。",
                     placeholder="请输入提示词",
                     lines=5,
                 )
+                with gr.Column(scale=1,min_width=10):
+                    # 定义按钮，用于提示词优化
+                    t2v_prompt_reference_button = gr.Button("提示词参考", elem_id="button2")
+                    t2v_prompt_refiner_button = gr.Button("提示词优化", elem_id="button2")
+                    
             with gr.Row():
                 t2v_negative_prompt = gr.Textbox(
                     label="负面提示词",
@@ -106,4 +111,29 @@ def create_t2v_ui():
                                   examples_per_page = 5
                                   )
     
-    return t2v_prompt, t2v_negative_prompt, t2v_input_image, t2v_input_video, t2v_denoising_strength, t2v_seed, t2v_rand_device, t2v_resolution, t2v_num_frames, t2v_cfg_scale, t2v_num_inference_steps, t2v_sigma_shift, t2v_tiled, t2v_tile_size, t2v_tile_stride, output_fps, output_quality, result_gallery, run_t2v_button, run_t2v_button_Disable, t2v_open_folder_button, t2v_history
+    return (
+        t2v_prompt, 
+        t2v_negative_prompt, 
+        t2v_input_image, 
+        t2v_input_video, 
+        t2v_denoising_strength, 
+        t2v_seed, 
+        t2v_rand_device, 
+        t2v_resolution, 
+        t2v_num_frames, 
+        t2v_cfg_scale, 
+        t2v_num_inference_steps, 
+        t2v_sigma_shift, 
+        t2v_tiled, 
+        t2v_tile_size, 
+        t2v_tile_stride, 
+        output_fps, 
+        output_quality, 
+        result_gallery, 
+        run_t2v_button, 
+        run_t2v_button_Disable, 
+        t2v_open_folder_button, 
+        t2v_history,
+        t2v_prompt_reference_button,
+        t2v_prompt_refiner_button
+    )

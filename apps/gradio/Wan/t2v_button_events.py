@@ -1,12 +1,14 @@
 import gradio as gr
 from function.history import load_t2v_history
 from function.video_generation import generate_video_from_text
-from function.open_output_folder import t2v_open_output_folder
+from function.open_output_folder import t2v_open_output_folder 
+from function.open_prompt_reference import open_prompt_reference
 def setup_t2v_button_events(
     run_t2v_button, run_t2v_button_Disable, t2v_prompt, t2v_negative_prompt, t2v_input_image, t2v_input_video,
     t2v_denoising_strength, t2v_seed, t2v_rand_device, t2v_resolution, t2v_num_frames, t2v_cfg_scale,
     t2v_num_inference_steps, t2v_sigma_shift, t2v_tiled, t2v_tile_size, t2v_tile_stride, output_fps, output_quality,
-    result_gallery, t2v_history, t2v_open_folder_button
+    result_gallery, t2v_history, t2v_open_folder_button,t2v_prompt_reference_button,
+        t2v_prompt_refiner_button
 ):
     generation_state = gr.Checkbox(value=False, visible=False)
 
@@ -70,5 +72,15 @@ def setup_t2v_button_events(
     t2v_open_folder_button.click(
         fn=t2v_open_output_folder
     )
+    t2v_prompt_reference_button.click(
+        fn=open_prompt_reference
+    )
+    t2v_prompt_refiner_button.click(
+        fn=t2v_open_output_folder
+    )
+
+
+
+
 
     return generation_state

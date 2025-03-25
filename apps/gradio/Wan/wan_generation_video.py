@@ -47,12 +47,12 @@ custom_css = """
 }
 
 #button2 {
-    background-color: #2263dd; /* 暗蓝色背景 */
-    height: 78px; /* 设置按钮高度 */
+    background-color: #1263dd; /* 暗蓝色背景 */
+    height: 75px; /* 设置按钮高度 */
     border-radius: 4px;
     color: #f8f9fa; /* 浅灰色文字 */
     padding: 12px 24px;
-    font-size: 20px;
+    font-size: 16px;
     border: none;
     cursor: pointer;
     transition: all 0.3s ease 0s;
@@ -154,7 +154,8 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
                             t2v_num_frames, t2v_cfg_scale, t2v_num_inference_steps, t2v_sigma_shift,
                             t2v_tiled, t2v_tile_size, t2v_tile_stride, output_fps, output_quality,
                             result_gallery, run_t2v_button, run_t2v_button_Disable,
-                            t2v_open_folder_button, t2v_history
+                            t2v_open_folder_button, t2v_history,t2v_prompt_reference_button,
+                            t2v_prompt_refiner_button
                         ) = create_t2v_ui()
                                 
                            
@@ -186,7 +187,8 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
         run_t2v_button, run_t2v_button_Disable, t2v_prompt, t2v_negative_prompt, t2v_input_image, t2v_input_video,
         t2v_denoising_strength, t2v_seed, t2v_rand_device, t2v_resolution, t2v_num_frames, t2v_cfg_scale,
         t2v_num_inference_steps, t2v_sigma_shift, t2v_tiled, t2v_tile_size, t2v_tile_stride, output_fps, output_quality,
-        result_gallery, t2v_history, t2v_open_folder_button
+        result_gallery, t2v_history, t2v_open_folder_button,t2v_prompt_reference_button,
+        t2v_prompt_refiner_button
     )
     setup_i2v_button_events(
         run_i2v_button, run_i2v_button_Disable, i2v_prompt, i2v_negative_prompt, i2v_input_image, i2v_input_video,
@@ -270,4 +272,4 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
             
 
 # 启动
-demo.launch(inbrowser=True, allowed_paths=["../../../output/t2v","../../../output/i2v"])
+demo.launch(inbrowser=True,share=False, allowed_paths=["../../../output/t2v","../../../output/i2v"])

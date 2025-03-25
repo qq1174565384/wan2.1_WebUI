@@ -5,6 +5,7 @@ from modelscope import snapshot_download
 import random
 import ast
 from datetime import datetime
+import os.path
 
 
 # 获取项目根目录的绝对路径
@@ -32,8 +33,22 @@ def generate_video_from_text(
     t2v_tile_stride="(15, 26)",  # 设置默认值为 "(15, 26)"
     output_fps=15,
     output_quality=9,
+
 ):
     global t2v_model_state,i2v_model_state, i2v_model_manager, i2v_pipe,i2v_model_paths, t2v_model_manager, t2v_pipe,t2v_model_paths
+
+
+    model_dir = os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B")
+    if not os.path.exists(model_dir) or not os.listdir(model_dir):
+        try:
+            snapshot_download("Wan-AI/Wan2.1-T2V-1.3B", local_dir=model_dir)
+        except Exception as e:
+            print(f"模型下载失败: {e}")
+            # 可以根据具体情况进行进一步处理，例如退出程序或重试
+            raise
+
+
+
     # 加载模型
     if not t2v_model_state:
         i2v_model_manager = None
@@ -45,11 +60,6 @@ def generate_video_from_text(
             os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "models_t5_umt5-xxl-enc-bf16.pth"),
             os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "Wan2.1_VAE.pth"),
         ]
-
-        for path in t2v_model_paths:
-            if not os.path.exists(path):
-                print(f"模型文件 {path} 不存在，请检查路径。")
-                raise FileNotFoundError(f"模型文件 {path} 不存在，请检查路径。")
 
         t2v_model_manager = ModelManager(device="cpu")
         try:
@@ -182,6 +192,18 @@ def generate_video_from_image(
     i2v_num_persistent_param_in_dit=0
 ):
     global t2v_model_state,i2v_model_state, i2v_model_manager, i2v_pipe, t2v_model_manager, t2v_pipe,t2v_model_paths
+
+    model_dir = os.path.join(project_root, "models", "Wan-AI", "Wan2.1-I2V-14B-480P")
+    if not os.path.exists(model_dir) or not os.listdir(model_dir):
+        try:
+            snapshot_download("Wan-AI/Wan2.1-I2V-14B-480P", local_dir=model_dir)
+        except Exception as e:
+            print(f"模型下载失败: {e}")
+            # 可以根据具体情况进行进一步处理，例如退出程序或重试
+            raise
+
+
+
     # 加载模型
     if not i2v_model_state:
         t2v_model_manager = None

@@ -25,7 +25,7 @@ def ModelFileManager():
             exist_1 = check_model_exist(local_dir_1)
             status_text_1 = gr.Textbox(value="已存在" if exist_1 else "未存在", label=f"{model_id_1} (文生视频用）状态", interactive=False)
             # 根据模型是否存在修改按钮文本
-            download_btn_1 = gr.Button(value="检测后重新下载" if exist_1 else "下载", interactive=True)
+            download_btn_1 = gr.Button(value="检查是否完整并下载" if exist_1 else "下载", interactive=True)
             open_btn_1 = gr.Button(value="打开所在文件夹", interactive=exist_1)
             local_dir_state_1 = gr.State(value=local_dir_1)
         
@@ -42,7 +42,7 @@ def ModelFileManager():
             exist_3 = check_model_exist(local_dir_3)
             status_text_3 = gr.Textbox(value="已存在" if exist_3 else "未存在", label=f"{model_id_3} (文生视频用）状态", interactive=False)
             # 根据模型是否存在修改按钮文本
-            download_btn_3 = gr.Button(value="检测后重新下载" if exist_3 else "下载", interactive=True)
+            download_btn_3 = gr.Button(value="检查是否完整并下载" if exist_3 else "下载", interactive=True)
             open_btn_3 = gr.Button(value="打开所在文件夹", interactive=exist_3)
             local_dir_state_3 = gr.State(value=local_dir_3)
         
@@ -58,7 +58,7 @@ def ModelFileManager():
             exist_2 = check_model_exist(local_dir_2)
             status_text_2 = gr.Textbox(value="已存在" if exist_2 else "未存在", label=f"{model_id_2} （图生视频用）状态", interactive=False)
             # 根据模型是否存在修改按钮文本
-            download_btn_2 = gr.Button(value="检测后重新下载" if exist_2 else "下载", interactive=True)
+            download_btn_2 = gr.Button(value="检查是否完整并下载" if exist_2 else "下载", interactive=True)
             open_btn_2 = gr.Button(value="打开所在文件夹", interactive=exist_2)
             local_dir_state_2 = gr.State(value=local_dir_2)
         
@@ -74,7 +74,7 @@ def ModelFileManager():
             exist_4 = check_model_exist(local_dir_4)
             status_text_4 = gr.Textbox(value="已存在" if exist_4 else "未存在", label=f"{model_id_4} （图生视频用）状态", interactive=False)
             # 根据模型是否存在修改按钮文本
-            download_btn_4 = gr.Button(value="检测后重新下载" if exist_4 else "下载", interactive=True)
+            download_btn_4 = gr.Button(value="检查是否完整并下载" if exist_4 else "下载", interactive=True)
             open_btn_4 = gr.Button(value="打开所在文件夹", interactive=exist_4)
             local_dir_state_4 = gr.State(value=local_dir_4)
         
@@ -91,7 +91,7 @@ def ModelFileManager():
             exist_5 = check_model_exist(local_dir_5)
             status_text_5 = gr.Textbox(value="已存在" if exist_5 else "未存在", label=f"{model_id_5}  (提示词优化用）状态", interactive=False)
             # 根据模型是否存在修改按钮文本
-            download_btn_5 = gr.Button(value="检测后重新下载" if exist_5 else "下载", interactive=True)
+            download_btn_5 = gr.Button(value="检查是否完整并下载" if exist_5 else "下载", interactive=True)
             open_btn_5 = gr.Button(value="打开所在文件夹", interactive=exist_5)
             local_dir_state_5 = gr.State(value=local_dir_5)
         

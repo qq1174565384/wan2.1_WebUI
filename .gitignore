@@ -21,3 +21,4 @@ models/stable_diffusion/.msc
 models/stable_diffusion/.mv
 models/stable_diffusion/flat2DAnimerge_v45Sharp.safetensors
 sd_toon_shading.py
+QwenPrompt

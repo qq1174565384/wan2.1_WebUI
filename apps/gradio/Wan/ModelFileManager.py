@@ -69,7 +69,6 @@ def ModelFileManager():
             )
 
         with gr.Column():
-            # 第二个模型 Wan-AI/Wan2.1-I2V-14B-480P
             model_id_4 = "Wan-AI/Wan2.1-I2V-14B-720P"
             # 移除多余逗号和重复路径
             local_dir_4 = os.path.join(project_root, "models", "Wan-AI", "Wan2.1-I2V-14B-720P")
@@ -84,6 +83,25 @@ def ModelFileManager():
                 inputs=[gr.State(model_id_4), local_dir_state_4],
                 outputs=[status_text_4, download_btn_4, open_btn_4]
             )
+            
+
+        with gr.Column():
+            #千问模型
+            model_id_5 = "QwenPrompt/qwen2-1.5b-instruct"
+            # 移除多余逗号和重复路径
+            local_dir_5 = os.path.join(project_root, "models", "QwenPrompt", "qwen2-1.5b-instruct")
+            exist_5 = check_model_exist(local_dir_5)
+            status_text_5 = gr.Textbox(value="已存在" if exist_5 else "未存在", label=f"{model_id_5}  (提示词优化用）状态", interactive=False)
+            download_btn_5 = gr.Button(value="下载", interactive=not exist_5)
+            open_btn_5 = gr.Button(value="打开所在文件夹", interactive=exist_5)
+            local_dir_state_5 = gr.State(value=local_dir_5)
+        
+            download_btn_5.click(
+                fn=download_model,
+                inputs=[gr.State(model_id_5), local_dir_state_5],
+                outputs=[status_text_5, download_btn_5, open_btn_5]
+            )
+
 
 
 
@@ -94,3 +112,4 @@ def ModelFileManager():
         open_btn_2.click(fn=open_folder, inputs=[local_dir_state_2])
         open_btn_3.click(fn=open_folder, inputs=[local_dir_state_3])
         open_btn_4.click(fn=open_folder, inputs=[local_dir_state_4])
+        open_btn_5.click(fn=open_folder, inputs=[local_dir_state_5])

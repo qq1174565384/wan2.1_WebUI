@@ -3,6 +3,7 @@ from function.history import load_t2v_history
 from function.video_generation import generate_video_from_text
 from function.open_output_folder import t2v_open_output_folder 
 from function.open_prompt_reference import open_prompt_reference
+from function.prompt_refiners import optimize_chinese_prompt
 def setup_t2v_button_events(
     run_t2v_button, run_t2v_button_Disable, t2v_prompt, t2v_negative_prompt, t2v_input_image, t2v_input_video,
     t2v_denoising_strength, t2v_seed, t2v_rand_device, t2v_resolution, t2v_num_frames, t2v_cfg_scale,
@@ -75,12 +76,9 @@ def setup_t2v_button_events(
     t2v_prompt_reference_button.click(
         fn=open_prompt_reference
     )
+
     t2v_prompt_refiner_button.click(
-        fn=t2v_open_output_folder
+        fn=optimize_chinese_prompt, inputs=[t2v_prompt], outputs=[t2v_prompt]
     )
-
-
-
-
 
     return generation_state

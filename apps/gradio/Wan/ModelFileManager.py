@@ -21,11 +21,11 @@ def ModelFileManager():
         with gr.Column():   
             # 第一个模型 Wan-AI/Wan2.1-T2V-1.3B
             model_id_1 = "Wan-AI/Wan2.1-T2V-1.3B"
-            # 移除多余逗号
             local_dir_1 = os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B")
             exist_1 = check_model_exist(local_dir_1)
             status_text_1 = gr.Textbox(value="已存在" if exist_1 else "未存在", label=f"{model_id_1} (文生视频用）状态", interactive=False)
-            download_btn_1 = gr.Button(value="下载", interactive=not exist_1)
+            # 根据模型是否存在修改按钮文本
+            download_btn_1 = gr.Button(value="检测后重新下载" if exist_1 else "下载", interactive=True)
             open_btn_1 = gr.Button(value="打开所在文件夹", interactive=exist_1)
             local_dir_state_1 = gr.State(value=local_dir_1)
         
@@ -38,11 +38,11 @@ def ModelFileManager():
         with gr.Column():
             # 第三个模型 Wan-AI/Wan2.1-T2V-14B
             model_id_3 = "Wan-AI/Wan2.1-T2V-14B"
-            # 移除多余逗号和重复路径
             local_dir_3 = os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-14B")
             exist_3 = check_model_exist(local_dir_3)
-            status_text_3 = gr.Textbox(value="已存在" if exist_3 else "未存在", label=f"{model_id_3} (暂时没用）状态", interactive=False)
-            download_btn_3 = gr.Button(value="下载", interactive=not exist_3)
+            status_text_3 = gr.Textbox(value="已存在" if exist_3 else "未存在", label=f"{model_id_3} (文生视频用）状态", interactive=False)
+            # 根据模型是否存在修改按钮文本
+            download_btn_3 = gr.Button(value="检测后重新下载" if exist_3 else "下载", interactive=True)
             open_btn_3 = gr.Button(value="打开所在文件夹", interactive=exist_3)
             local_dir_state_3 = gr.State(value=local_dir_3)
         
@@ -54,11 +54,11 @@ def ModelFileManager():
         with gr.Column():
             # 第二个模型 Wan-AI/Wan2.1-I2V-14B-480P
             model_id_2 = "Wan-AI/Wan2.1-I2V-14B-480P"
-            # 移除多余逗号和重复路径
             local_dir_2 = os.path.join(project_root, "models", "Wan-AI", "Wan2.1-I2V-14B-480P")
             exist_2 = check_model_exist(local_dir_2)
-            status_text_2 = gr.Textbox(value="已存在" if exist_2 else "未存在", label=f"{model_id_2} 图生视频用）状态", interactive=False)
-            download_btn_2 = gr.Button(value="下载", interactive=not exist_2)
+            status_text_2 = gr.Textbox(value="已存在" if exist_2 else "未存在", label=f"{model_id_2} （图生视频用）状态", interactive=False)
+            # 根据模型是否存在修改按钮文本
+            download_btn_2 = gr.Button(value="检测后重新下载" if exist_2 else "下载", interactive=True)
             open_btn_2 = gr.Button(value="打开所在文件夹", interactive=exist_2)
             local_dir_state_2 = gr.State(value=local_dir_2)
         
@@ -70,11 +70,11 @@ def ModelFileManager():
 
         with gr.Column():
             model_id_4 = "Wan-AI/Wan2.1-I2V-14B-720P"
-            # 移除多余逗号和重复路径
             local_dir_4 = os.path.join(project_root, "models", "Wan-AI", "Wan2.1-I2V-14B-720P")
             exist_4 = check_model_exist(local_dir_4)
-            status_text_4 = gr.Textbox(value="已存在" if exist_4 else "未存在", label=f"{model_id_4}  (暂时没用）状态", interactive=False)
-            download_btn_4 = gr.Button(value="下载", interactive=not exist_4)
+            status_text_4 = gr.Textbox(value="已存在" if exist_4 else "未存在", label=f"{model_id_4} （图生视频用）状态", interactive=False)
+            # 根据模型是否存在修改按钮文本
+            download_btn_4 = gr.Button(value="检测后重新下载" if exist_4 else "下载", interactive=True)
             open_btn_4 = gr.Button(value="打开所在文件夹", interactive=exist_4)
             local_dir_state_4 = gr.State(value=local_dir_4)
         
@@ -83,16 +83,15 @@ def ModelFileManager():
                 inputs=[gr.State(model_id_4), local_dir_state_4],
                 outputs=[status_text_4, download_btn_4, open_btn_4]
             )
-            
 
         with gr.Column():
-            #千问模型
+            # 千问模型
             model_id_5 = "QwenPrompt/qwen2-1.5b-instruct"
-            # 移除多余逗号和重复路径
             local_dir_5 = os.path.join(project_root, "models", "QwenPrompt", "qwen2-1.5b-instruct")
             exist_5 = check_model_exist(local_dir_5)
             status_text_5 = gr.Textbox(value="已存在" if exist_5 else "未存在", label=f"{model_id_5}  (提示词优化用）状态", interactive=False)
-            download_btn_5 = gr.Button(value="下载", interactive=not exist_5)
+            # 根据模型是否存在修改按钮文本
+            download_btn_5 = gr.Button(value="检测后重新下载" if exist_5 else "下载", interactive=True)
             open_btn_5 = gr.Button(value="打开所在文件夹", interactive=exist_5)
             local_dir_state_5 = gr.State(value=local_dir_5)
         

@@ -27,7 +27,7 @@ def optimize_chinese_prompt(raw_prompt):
         # 获取模型和模型路径
         model, model_path = model_manager.fetch_model("qwen_prompt", require_model_path=True)
         # 定义系统提示词
-        system_prompt = """你是一名中文图像描述优化师。你的任务是对给定的中文图像描述进行优化，添加合适的词汇使描述的图像更具美感，同时保持输入和输出之间的相关性,格式请按照“运镜描述 + 主体(主体描述)+ 场景(场景描述)+ 运动(运动描述)+ 镜头语言 + 氛围词 + 风格化”生成，没有+号。中文描述不应超过 25 字。"""
+        system_prompt = """你是一名中文图像描述优化师。你的任务是对给定的中文图像描述进行优化，添加合适的词汇使描述的图像更具美感，同时保持输入和输出之间的相关性,格式请按照“运镜描述 + 主体(主体描述)+ 场景(场景描述)+ 运动(运动描述)+ 镜头语言 + 氛围词 + 风格化”生成，没有+号。中文描述不应超过 250 字。"""
         # 初始化分词器
         tokenizer = AutoTokenizer.from_pretrained(model_path)
 
@@ -54,6 +54,7 @@ def optimize_chinese_prompt(raw_prompt):
         # 生成输出
         generated_ids = model.generate(
             model_inputs.input_ids,
+            attention_mask=model_inputs.get('attention_mask'),  # 添加 attention_mask
             max_new_tokens=512
         )
         generated_ids = [

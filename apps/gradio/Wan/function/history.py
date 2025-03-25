@@ -32,7 +32,15 @@ def load_t2v_history():
                 # 如果第一行中没有'prompt:'，跳过当前MP4文件
                 mp4_files.remove(mp4_file)
                 continue
-            prompt = first_line.split('prompt:')[1].strip()
+            # 查找 prompt: 和 negative_prompt 之间的内容
+            start_index = first_line.find('prompt:') + len('prompt:')
+            end_index = first_line.find('negative_prompt')
+            if end_index == -1:
+                # 如果没有 negative_prompt，就取到行尾
+                prompt = first_line[start_index:].strip()
+            else:
+                prompt = first_line[start_index:end_index].strip()
+
             t2v_history_list.append([prompt, mp4_path])
 
     return t2v_history_list

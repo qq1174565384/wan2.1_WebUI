@@ -5,6 +5,16 @@ def create_t2v_ui():
         # 参数调节
         with gr.Column():
             with gr.Row():
+                t2v_ModelChoices = gr.Dropdown(
+                        label="模型选择",
+                        choices=[
+                            "Wan-AI/Wan2.1-T2V-1.3B", 
+                            "Wan-AI/Wan2.1-T2V-14B"
+                        ],
+                        value = "Wan-AI/Wan2.1-T2V-1.3B",
+                        info="Wan-AI/Wan2.1-T2V-1.3B 占用内存12g，显存6G；Wan-AI/Wan2.1-T2V-14B 占用内存100g，显存8G"
+                    )
+            with gr.Row():
                 # 定义一个文本框，用于输入文本到视频的提示词
                 t2v_prompt = gr.Textbox(scale=4,
                     label="正面提示词",
@@ -30,7 +40,7 @@ def create_t2v_ui():
                     label="分辨率",
                     choices=[
                         "480*832", "832*480", "720*1280", 
-                        "1280*720", "960*960", "720*1280",
+                        "1280*720", "960*960", 
                         "1088*832", "832*1088"
                     ],
                     value="832*480",
@@ -135,5 +145,6 @@ def create_t2v_ui():
         t2v_open_folder_button, 
         t2v_history,
         t2v_prompt_reference_button,
-        t2v_prompt_refiner_button
+        t2v_prompt_refiner_button,
+        t2v_ModelChoices
     )

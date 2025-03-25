@@ -9,7 +9,7 @@ def setup_t2v_button_events(
     t2v_denoising_strength, t2v_seed, t2v_rand_device, t2v_resolution, t2v_num_frames, t2v_cfg_scale,
     t2v_num_inference_steps, t2v_sigma_shift, t2v_tiled, t2v_tile_size, t2v_tile_stride, output_fps, output_quality,
     result_gallery, t2v_history, t2v_open_folder_button,t2v_prompt_reference_button,
-        t2v_prompt_refiner_button
+        t2v_prompt_refiner_button,t2v_ModelChoices
 ):
     generation_state = gr.Checkbox(value=False, visible=False)
 
@@ -49,7 +49,8 @@ def setup_t2v_button_events(
             t2v_tile_size,
             t2v_tile_stride,
             output_fps,
-            output_quality
+            output_quality,
+            t2v_ModelChoices
         ],
         outputs=[result_gallery],
         show_progress="full",

@@ -18,6 +18,7 @@ https://github.com/qq1174565384/wan2.1_WebUI/releases
 
 ### 问题修复
 - 暂时去掉了TeaCache功能，在某些设备不兼容。
+- 修复了历史记录提示词只能取第一行的bug。
 
 ### 兼容性说明
 - 无

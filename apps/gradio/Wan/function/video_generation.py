@@ -34,6 +34,8 @@ def generate_video_from_text(
     output_fps=15,
     output_quality=9,
     t2v_ModelChoices="Wan-AI/Wan2.1-T2V-1.3B",
+    t2v_num_persistent_param_in_dit=0,
+    t2v_loadChoices="ram"
 ):
     global t2v_model_state, t2v_model_manager, t2v_pipe
 
@@ -70,22 +72,29 @@ def generate_video_from_text(
                 print(f"模型下载失败: {e}")
                 raise
 
-        # 加载模型
-        if not t2v_model_state:
-            print("正在加载模型...")
-            t2v_model_manager = ModelManager(device="cpu")
-            try:
-                t2v_model_manager.load_models(
-                    model_paths,
-                    torch_dtype=torch_dtype,
-                )
-            except Exception as e:
-                print(f"模型加载失败: {e}")
-                raise
+        # 根据 t2v_loadChoices 设置设备
+        if t2v_loadChoices == "CPU":
+            device = "cpu"
+        elif t2v_loadChoices == "CUDA":
+            device = "cuda"
+        else:
+            print(f"无效的 t2v_loadChoices 值: {t2v_loadChoices}，使用默认值 cpu")
+            device = "cpu"
 
-            # 创建管道
-            t2v_pipe = WanVideoPipeline.from_model_manager(t2v_model_manager, torch_dtype=torch.bfloat16, device="cuda")
-            t2v_pipe.enable_vram_management(num_persistent_param_in_dit=None)
+        t2v_model_manager = ModelManager(device=device) 
+        
+        try:
+            t2v_model_manager.load_models(
+                model_paths,
+                torch_dtype=torch_dtype,
+            )
+        except Exception as e:
+            print(f"模型加载失败: {e}")
+            raise
+
+        # 创建管道
+        t2v_pipe = WanVideoPipeline.from_model_manager(t2v_model_manager, torch_dtype=torch.bfloat16, device="cuda")
+        t2v_pipe.enable_vram_management(num_persistent_param_in_dit=t2v_num_persistent_param_in_dit)
 
         return t2v_model_manager, t2v_pipe
 

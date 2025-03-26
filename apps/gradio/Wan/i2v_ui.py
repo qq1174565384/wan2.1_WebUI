@@ -77,7 +77,7 @@ def create_i2v_ui():
                 i2v_tiled = gr.Checkbox(label="  分块生成（减少显存使用）", value=True, elem_id="custom-checkbox")    
             with gr.Row():     
                 i2v_num_persistent_param_in_dit = gr.Slider(
-                   minimum=0, maximum=64000000000, step=1000000000, label="num_persistent_param_in_dit ", value=0, interactive=True
+                   minimum=0, maximum=64000000000, step=1000000000, label="num_persistent_param_in_dit（持久化参数量）", value=0, interactive=True
                 )
             with gr.Row():  
                 with gr.Column(scale=1, min_width=1): 
@@ -109,6 +109,7 @@ def create_i2v_ui():
                 with gr.Column(min_width=100):
                     i2v_params_display = gr.Markdown(
                         """
+                        - **ModelManagerdevice**：选择模型管理设备，支持CPU和CUDA。CPU更占内存，CUDA更占显存。
                         - **input_image**：输入图像，用于生成视频的基础。
                         - **prompt**：指定生成视频内容的文本描述。
                         - **negative_prompt**：用于排除不希望出现在生成视频中的特征。比如指定“色调艳丽，过曝”等负面特征，让生成的视频避免出现这些情况。
@@ -119,7 +120,7 @@ def create_i2v_ui():
                         - **tile_size**：分块的大小，以元组形式表示，例如 (30, 52) 表示分块的高度和宽度。
                         - **tile_stride**：分块的步长，同样以元组形式表示，用于控制分块之间的重叠程度。
                         - **分块生成**：可以减少显存的使用，特别是在处理大尺寸图像或视频时。
-                        - **num_persistent_param_in_dit**：设置持久化参数的大小，单位为字节。（越大越占显存，生成速度越快）
+                        - **num_persistent_param_in_dit**：设置持久化参数的大小，单位为字节。（越大越占显存，生成速度越快），如果显存爆了反而更慢。
                         """,
                         label="生成参数帮助",
                     )

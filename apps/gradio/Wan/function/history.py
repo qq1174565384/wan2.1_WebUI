@@ -27,20 +27,21 @@ def load_t2v_history():
             mp4_files.remove(mp4_file)
             continue
         with open(txt_path, 'r', encoding='utf-8') as f:
-            first_line = f.readline()
-            if 'prompt:' not in first_line:
-                # 如果第一行中没有'prompt:'，跳过当前MP4文件
+            # 读取整个文件内容
+            content = f.read()
+            start_index = content.find('prompt:')
+            if start_index == -1:
+                # 如果没有 'prompt:'，跳过当前 MP4 文件
                 mp4_files.remove(mp4_file)
                 continue
-            # 查找 prompt: 和 negative_prompt 之间的内容
-            start_index = first_line.find('prompt:') + len('prompt:')
-            end_index = first_line.find('negative_prompt')
+            start_index += len('prompt:')
+            end_index = content.find('negative_prompt')
             if end_index == -1:
-                # 如果没有 negative_prompt，就取到行尾
-                prompt = first_line[start_index:].strip()
+                # 如果没有 'negative_prompt'，就取到文件末尾
+                prompt = content[start_index:].strip()
             else:
-                prompt = first_line[start_index:end_index].strip()
-
+                prompt = content[start_index:end_index].strip()
+    
             t2v_history_list.append([prompt, mp4_path])
 
     return t2v_history_list
@@ -72,12 +73,21 @@ def load_i2v_history():
             mp4_files.remove(mp4_file)
             continue
         with open(txt_path, 'r', encoding='utf-8') as f:
-            first_line = f.readline()
-            if 'prompt:' not in first_line:
-                # 如果第一行中没有'prompt:'，跳过当前MP4文件
+            # 读取整个文件内容
+            content = f.read()
+            start_index = content.find('prompt:')
+            if start_index == -1:
+                # 如果没有 'prompt:'，跳过当前 MP4 文件
                 mp4_files.remove(mp4_file)
                 continue
-            prompt = first_line.split('prompt:')[1].strip()
+            start_index += len('prompt:')
+            end_index = content.find('negative_prompt')
+            if end_index == -1:
+                # 如果没有 'negative_prompt'，就取到文件末尾
+                prompt = content[start_index:].strip()
+            else:
+                prompt = content[start_index:end_index].strip()
+
             i2v_history_list.append([prompt, mp4_path])
 
     return i2v_history_list

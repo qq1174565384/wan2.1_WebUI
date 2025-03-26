@@ -5,13 +5,21 @@ def create_t2v_ui():
         # 参数调节
         with gr.Column():
             with gr.Row():
-                t2v_ModelChoices = gr.Dropdown(
+                t2v_ModelChoices = gr.Dropdown(scale=4,
                         label="模型选择",
                         choices=[
                             "Wan-AI/Wan2.1-T2V-1.3B", 
                             "Wan-AI/Wan2.1-T2V-14B"
                         ],
                         value = "Wan-AI/Wan2.1-T2V-1.3B",
+                    )
+                t2v_loadChoices = gr.Dropdown(scale=1,min_width=10,
+                        label="模型管理设备",
+                        choices=[
+                            "CPU", 
+                            "CUDA"
+                        ],
+                        value = "CPU",
                     )
             with gr.Row():
                 # 定义一个文本框，用于输入文本到视频的提示词
@@ -66,7 +74,13 @@ def create_t2v_ui():
             with gr.Row(): 
                 t2v_tile_size = gr.Textbox(visible=True, label="分块大小(tile_size)", value="(30, 52)", interactive=True)
                 t2v_tile_stride = gr.Textbox(visible=True, label="分块步长(tile_stride)", value="(15, 26)", interactive=True)    
-                t2v_tiled = gr.Checkbox(label="  分块生成（减少显存使用）", value=True, elem_id="custom-checkbox")    
+                t2v_tiled = gr.Checkbox(label="  分块生成（减少显存使用）", value=True, elem_id="custom-checkbox")   
+
+            with gr.Row():     
+                t2v_num_persistent_param_in_dit = gr.Slider(
+                   minimum=0, maximum=64000000000, step=1000000000, label="num_persistent_param_in_dit(持久化参数量) ", value=0, interactive=True
+                ) 
+
             with gr.Row():  
                 with gr.Column(scale=1, min_width=1): 
                     t2v_seed = gr.Number(label="随机数种子 (Seed)", value=-1)
@@ -97,6 +111,7 @@ def create_t2v_ui():
                 with gr.Column(min_width=100):
                     params_display = gr.Markdown(
                         """
+                        - **ModelManagerdevice**：选择模型管理设备，支持CPU和CUDA。CPU更占内存，CUDA更占显存。
                         - **prompt**：指定生成视频内容的文本描述。
                         - **negative_prompt**：用于排除不希望出现在生成视频中的特征。比如指定“色调艳丽，过曝”等负面特征，让生成的视频避免出现这些情况。
                         - **seed**：随机种子，用于控制生成的随机性。设置相同的种子可以保证每次生成的结果一致，方便复现特定的生成效果。
@@ -106,6 +121,7 @@ def create_t2v_ui():
                         - **tile_size**：分块的大小，以元组形式表示，例如 (30, 52) 表示分块的高度和宽度。
                         - **tile_stride**：分块的步长，同样以元组形式表示，用于控制分块之间的重叠程度。
                         - **分块生成**：可以减少显存的使用，特别是在处理大尺寸图像或视频时。
+                        - **num_persistent_param_in_dit**：设置持久化参数的大小，单位为字节。（越大越占显存，生成速度越快），如果显存爆了反而更慢。
                         """,
                         label="生成参数帮助",
                     )
@@ -145,5 +161,7 @@ def create_t2v_ui():
         t2v_history,
         t2v_prompt_reference_button,
         t2v_prompt_refiner_button,
-        t2v_ModelChoices
+        t2v_ModelChoices,
+        t2v_num_persistent_param_in_dit,
+        t2v_loadChoices
     )

@@ -155,7 +155,7 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
                             t2v_tiled, t2v_tile_size, t2v_tile_stride, output_fps, output_quality,
                             result_gallery, run_t2v_button, run_t2v_button_Disable,
                             t2v_open_folder_button, t2v_history,t2v_prompt_reference_button,
-                            t2v_prompt_refiner_button,t2v_ModelChoices
+                            t2v_prompt_refiner_button,t2v_ModelChoices,t2v_num_persistent_param_in_dit,t2v_loadChoices
                         ) = create_t2v_ui()
                                 
                            
@@ -188,7 +188,7 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
         t2v_denoising_strength, t2v_seed, t2v_rand_device, t2v_resolution, t2v_num_frames, t2v_cfg_scale,
         t2v_num_inference_steps, t2v_sigma_shift, t2v_tiled, t2v_tile_size, t2v_tile_stride, output_fps, output_quality,
         result_gallery, t2v_history, t2v_open_folder_button,t2v_prompt_reference_button,
-        t2v_prompt_refiner_button,t2v_ModelChoices
+        t2v_prompt_refiner_button,t2v_ModelChoices,t2v_num_persistent_param_in_dit,t2v_loadChoices
     )
     setup_i2v_button_events(
         run_i2v_button, run_i2v_button_Disable, i2v_prompt, i2v_negative_prompt, i2v_input_image, i2v_input_video,

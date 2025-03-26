@@ -12,7 +12,6 @@ def create_t2v_ui():
                             "Wan-AI/Wan2.1-T2V-14B"
                         ],
                         value = "Wan-AI/Wan2.1-T2V-1.3B",
-                        info="Wan-AI/Wan2.1-T2V-1.3B 占用内存12g，显存6G；Wan-AI/Wan2.1-T2V-14B 占用内存100g，显存8G"
                     )
             with gr.Row():
                 # 定义一个文本框，用于输入文本到视频的提示词

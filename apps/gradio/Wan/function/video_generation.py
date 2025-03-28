@@ -35,9 +35,9 @@ def generate_video_from_text(
     output_quality=9,
     t2v_ModelChoices="Wan-AI/Wan2.1-T2V-1.3B",
     t2v_num_persistent_param_in_dit=0,
-    t2v_loadChoices="ram"
+    t2v_loadChoices="RAM"
 ):
-    global t2v_model_state, t2v_model_manager, t2v_pipe
+    global t2v_model_state,i2v_model_state, t2v_model_manager, t2v_pipe, i2v_model_manager, i2v_pipe
 
     def download_and_load_model(model_choice, project_root, t2v_model_state):
         if model_choice == "Wan-AI/Wan2.1-T2V-1.3B":
@@ -108,6 +108,7 @@ def generate_video_from_text(
         )
 
     t2v_model_state = True
+    i2v_model_state = False
 
     # 处理输入参数
     t2v_seed = t2v_seed if t2v_seed >= 0 else random.randint(0, 2147483647)
@@ -219,54 +220,107 @@ def generate_video_from_image(
     i2v_tile_stride="(15, 26)",  # 设置默认值为 "(15, 26)"
     i2v_output_fps=15,
     i2v_output_quality=9,
-    i2v_num_persistent_param_in_dit=0
+    i2v_num_persistent_param_in_dit=0,
+    i2v_ModelChoices = "Wan-AI/Wan2.1-I2V-14B-480P",
+    i2v_loadChoices = "CPU"
 ):
-    global t2v_model_state,i2v_model_state, i2v_model_manager, i2v_pipe, t2v_model_manager, t2v_pipe,t2v_model_paths
+    global t2v_model_state,i2v_model_state, t2v_model_manager, t2v_pipe, i2v_model_manager, i2v_pipe
 
-    model_dir = os.path.join(project_root, "models", "Wan-AI", "Wan2.1-I2V-14B-480P")
-    if not os.path.exists(model_dir) or not os.listdir(model_dir):
+    def download_and_load_model(model_choice, project_root, i2v_model_state):
+       
+
+        #按需加载模型    
+        if model_choice == "Wan-AI/Wan2.1-I2V-14B-480P":
+            model_name = "Wan2.1-I2V-14B-480P"
+             #检测模型是否存在
+            model_dir = os.path.join(project_root, "models", "Wan-AI", model_name)
+            if not os.path.exists(model_dir) or not os.listdir(model_dir):
+                try:
+                    snapshot_download(model_choice, local_dir=model_dir)
+                except Exception as e:
+                    print(f"模型下载失败: {e}")
+                    raise
+            model_paths1 = [os.path.join(project_root, "models", "Wan-AI", model_name, "models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth")],
+            model_paths2 = [
+                [
+                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00001-of-00007.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00002-of-00007.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00003-of-00007.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00004-of-00007.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00005-of-00007.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00006-of-00007.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00007-of-00007.safetensors"),
+                ],
+                os.path.join(project_root, "models", "Wan-AI", model_name, "models_t5_umt5-xxl-enc-bf16.pth"),
+                os.path.join(project_root, "models", "Wan-AI", model_name, "Wan2.1_VAE.pth"),
+            ]
+        else:
+            model_name = "Wan2.1-I2V-14B-720P"
+             #检测模型是否存在
+            model_dir = os.path.join(project_root, "models", "Wan-AI", model_name)
+            if not os.path.exists(model_dir) or not os.listdir(model_dir):
+                try:
+                    snapshot_download(model_choice, local_dir=model_dir)
+                except Exception as e:
+                    print(f"模型下载失败: {e}")
+                    raise
+            model_paths1 = [os.path.join(project_root, "models", "Wan-AI", model_name, "models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth")],
+            model_paths2 = [
+                [
+                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00001-of-00007.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00002-of-00007.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00003-of-00007.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00004-of-00007.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00005-of-00007.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00006-of-00007.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00007-of-00007.safetensors"),
+                ],
+                os.path.join(project_root, "models", "Wan-AI", model_name, "models_t5_umt5-xxl-enc-bf16.pth"),
+                os.path.join(project_root, "models", "Wan-AI", model_name, "Wan2.1_VAE.pth"),
+            ]
+
+       
+
+        # 根据 t2v_loadChoices 设置设备
+        if i2v_loadChoices == "CPU":
+            device = "cpu"
+        elif i2v_loadChoices == "CUDA":
+            device = "cuda"
+        else:
+            print(f"无效的 i2v_loadChoices 值: {i2v_loadChoices}，使用默认值 cpu")
+            device = "cpu"
+
+
+        # 加载模型
+        i2v_model_manager = ModelManager(device=device) 
+        
         try:
-            snapshot_download("Wan-AI/Wan2.1-I2V-14B-480P", local_dir=model_dir)
+            i2v_model_manager.load_models(
+                model_paths1,
+                torch_dtype=torch.float32, # Image Encoder is loaded with float32
+            )
+            i2v_model_manager.load_models(
+                model_paths2,
+                torch_dtype=torch.float16,
+            )
         except Exception as e:
-            print(f"模型下载失败: {e}")
-            # 可以根据具体情况进行进一步处理，例如退出程序或重试
+            print(f"模型加载失败: {e}")
             raise
-
-
-
-    # 加载模型
-    if not i2v_model_state:
-        t2v_model_manager = None
-        t2v_pipe = None
-        print("正在加载模型...")
-        os.chdir(project_root)
-        i2v_model_manager = ModelManager(device="cpu")
-        i2v_model_manager.load_models(
-            ["models/Wan-AI/Wan2.1-I2V-14B-480P/models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth"],
-            torch_dtype=torch.float32, # Image Encoder is loaded with float32
-        )
-        i2v_model_manager.load_models(
-        [
-            [
-            "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00001-of-00007.safetensors",
-            "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00002-of-00007.safetensors",
-            "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00003-of-00007.safetensors",
-            "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00004-of-00007.safetensors",
-            "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00005-of-00007.safetensors",
-            "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00006-of-00007.safetensors",
-            "models/Wan-AI/Wan2.1-I2V-14B-480P/diffusion_pytorch_model-00007-of-00007.safetensors",
-        ],
-            "models/Wan-AI/Wan2.1-I2V-14B-480P/models_t5_umt5-xxl-enc-bf16.pth",
-            "models/Wan-AI/Wan2.1-I2V-14B-480P/Wan2.1_VAE.pth",
-        ],
-        torch_dtype=torch.bfloat16, # You can set `torch_dtype=torch.float8_e4m3fn` to enable FP8 quantization.
-        )
 
         # 创建管道
         i2v_pipe = WanVideoPipeline.from_model_manager(i2v_model_manager, torch_dtype=torch.bfloat16, device="cuda")
-        i2v_pipe.enable_vram_management(num_persistent_param_in_dit= i2v_num_persistent_param_in_dit) # You can set `num_persistent_param_in_dit` to a small number to reduce VRAM required.
-        pass
+        i2v_pipe.enable_vram_management(num_persistent_param_in_dit=i2v_num_persistent_param_in_dit)
 
+        return i2v_model_manager, i2v_pipe
+
+    if i2v_ModelChoices == "Wan-AI/Wan2.1-I2V-14B-480P":
+        i2v_model_manager, i2v_pipe = download_and_load_model(
+            "Wan-AI/Wan2.1-I2V-14B-480P", project_root, i2v_model_state
+        )
+    else:
+        i2v_model_manager, i2v_pipe = download_and_load_model(
+            "Wan-AI/Wan2.1-I2V-14B-720P", project_root, i2v_model_state
+        )
     t2v_model_state = False
     i2v_model_state = True
     

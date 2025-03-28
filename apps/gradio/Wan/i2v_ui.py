@@ -1,10 +1,13 @@
 import gradio as gr
 
-def calculate_resolution(image):
+def calculate_resolution(image,ModelChoices):
     if image is None:
         return "832*480"  # 默认值
     width, height = image.size
-    max_size = 832
+    if ModelChoices == "Wan-AI/Wan2.1-I2V-14B-480P":
+        max_size = 832
+    else:
+        max_size = 1270
     if width > height:
         new_width = max_size
         new_height = int(height * (max_size / width))
@@ -18,14 +21,28 @@ def create_i2v_ui():
     with gr.Row():
         # 参数调节
         with gr.Column():
+            with gr.Row():
+                i2v_ModelChoices = gr.Dropdown(scale=4,
+                        label="模型选择",
+                        choices=[
+                            "Wan-AI/Wan2.1-I2V-14B-480P", 
+                            "Wan-AI/Wan2.1-I2V-14B-720P"
+                        ],
+                        value = "Wan-AI/Wan2.1-I2V-14B-480P",
+                    )
+                i2v_loadChoices = gr.Dropdown(scale=1,min_width=10,
+                        label="模型管理设备",
+                        choices=[
+                            "CPU", 
+                            "CUDA"
+                        ],
+                        value = "CPU",
+                    )
 
             with gr.Row():
 
                 i2v_input_image = gr.Image(label="输入图像", type="pil", value=None, visible=True)
 
-            with gr.Row():
-                #定义一个按钮，点击后根据图片反推提示词
-                i2v_inference_prompt = gr.Button("反推提示词（施工中）", elem_id="button3",scale=1)   
             with gr.Row():   
                 # 定义一个文本框，用于输入文本到视频的提示词
                 i2v_prompt = gr.Textbox(scale=3,
@@ -34,6 +51,10 @@ def create_i2v_ui():
                     placeholder="请输入提示词",
                     lines=5,
                 )
+                with gr.Column(scale=1,min_width=10):
+                    # 定义按钮，用于提示词优化
+                    i2v_prompt_inference_button = gr.Button("提示词反推", elem_id="button2")
+                    i2v_prompt_refiner_button = gr.Button("提示词优化", elem_id="button2")
             with gr.Row():
                 i2v_negative_prompt = gr.Textbox(
                     label="负面提示词",
@@ -45,13 +66,18 @@ def create_i2v_ui():
                 # 根据i2v_input_image输入图片的比例来设定分辨率
                 i2v_resolution = gr.Textbox(
                     label="分辨率",
-                    value=calculate_resolution(i2v_input_image.value),
+                    value=calculate_resolution(i2v_input_image.value,i2v_ModelChoices.value),
                     interactive=True,
-                    visible=False
+                    visible=True
                 )
                 i2v_input_image.change(
                     fn=calculate_resolution,
-                    inputs=i2v_input_image,
+                    inputs=[i2v_input_image,i2v_ModelChoices],
+                    outputs=i2v_resolution
+                )
+                i2v_ModelChoices.change(
+                    fn=calculate_resolution,
+                    inputs=[i2v_input_image,i2v_ModelChoices],
                     outputs=i2v_resolution
                 )
                 # 生成帧数
@@ -121,6 +147,8 @@ def create_i2v_ui():
                         - **tile_stride**：分块的步长，同样以元组形式表示，用于控制分块之间的重叠程度。
                         - **分块生成**：可以减少显存的使用，特别是在处理大尺寸图像或视频时。
                         - **num_persistent_param_in_dit**：设置持久化参数的大小，单位为字节。（越大越占显存，生成速度越快），如果显存爆了反而更慢。
+                        - **提示词反推**：提示词反推第一次使用会下载模型，进度查看控制台，后续使用就会快了。
+                        - **提示词优化**：提示词优化第一次使用会下载模型，进度查看控制台，后续使用就会快了。
                         """,
                         label="生成参数帮助",
                     )
@@ -135,4 +163,33 @@ def create_i2v_ui():
                                   examples_per_page = 5
                                   )
     
-    return i2v_prompt, i2v_negative_prompt, i2v_input_image, i2v_input_video, i2v_denoising_strength, i2v_seed, i2v_rand_device, i2v_resolution, i2v_num_frames, i2v_cfg_scale, i2v_num_inference_steps, i2v_sigma_shift, i2v_tiled, i2v_tile_size, i2v_tile_stride, i2v_output_fps, i2v_output_quality, i2v_result_gallery, run_i2v_button, run_i2v_button_Disable, i2v_open_folder_button, i2v_history,i2v_num_persistent_param_in_dit
+    return (
+        i2v_prompt, 
+        i2v_negative_prompt, 
+        i2v_input_image, 
+        i2v_input_video, 
+        i2v_denoising_strength, 
+        i2v_seed, 
+        i2v_rand_device, 
+        i2v_resolution, 
+        i2v_num_frames, 
+        i2v_cfg_scale, 
+        i2v_num_inference_steps, 
+        i2v_sigma_shift, 
+        i2v_tiled, 
+        i2v_tile_size, 
+        i2v_tile_stride, 
+        i2v_output_fps, 
+        i2v_output_quality, 
+        i2v_result_gallery, 
+        run_i2v_button, 
+        run_i2v_button_Disable, 
+        i2v_open_folder_button, 
+        i2v_history,
+        i2v_num_persistent_param_in_dit,
+        i2v_ModelChoices,
+        i2v_loadChoices,
+        i2v_prompt_refiner_button,
+        i2v_prompt_inference_button
+
+    )

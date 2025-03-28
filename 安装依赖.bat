@@ -73,6 +73,7 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
+
 REM 询问用户是否安装 flash-attn
 set /p install_flash_attn=是否要安装 flash-attn？（大幅减少显存使用，但编译时间可能非常漫长）(Y/N): 
 if /i "%install_flash_attn%"=="Y" (
@@ -93,6 +94,12 @@ if /i "%install_flash_attn%"=="Y" (
         exit /b 1
     )
 )
+
+@REM pip install datasets==2.18.0
+@REM pip install simplejson
+pip install decord>=0.6.0
+pip install librosa
+pip install fairseq
 
 echo 所有依赖安装成功！
 pause

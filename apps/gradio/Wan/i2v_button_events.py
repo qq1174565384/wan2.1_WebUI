@@ -2,11 +2,16 @@ import gradio as gr
 from function.history import  load_i2v_history
 from function.video_generation import generate_video_from_image
 from function.open_output_folder import i2v_open_output_folder
+from function.prompt_refiners import optimize_chinese_prompt
+from function.prompt_inference import prompt_inference
 def setup_i2v_button_events(
     run_i2v_button, run_i2v_button_Disable, i2v_prompt, i2v_negative_prompt, i2v_input_image, i2v_input_video,
     i2v_denoising_strength, i2v_seed, i2v_rand_device, i2v_resolution, i2v_num_frames, i2v_cfg_scale,
     i2v_num_inference_steps, i2v_sigma_shift, i2v_tiled, i2v_tile_size, i2v_tile_stride,i2v_output_fps, i2v_output_quality,
-    i2v_result_gallery, i2v_history, i2v_open_folder_button,i2v_num_persistent_param_in_dit
+    i2v_result_gallery, i2v_history, i2v_open_folder_button,i2v_num_persistent_param_in_dit,i2v_ModelChoices,
+        i2v_loadChoices,
+        i2v_prompt_refiner_button,
+        i2v_prompt_inference_button
 ):
     i2v_generation_state = gr.Checkbox(value=False, visible=False)
 
@@ -47,7 +52,9 @@ def setup_i2v_button_events(
             i2v_tile_stride,
             i2v_output_fps,
             i2v_output_quality,
-            i2v_num_persistent_param_in_dit
+            i2v_num_persistent_param_in_dit,
+            i2v_ModelChoices,
+            i2v_loadChoices
         ],
         outputs=[i2v_result_gallery],
         show_progress="full",
@@ -71,5 +78,16 @@ def setup_i2v_button_events(
     i2v_open_folder_button.click(
         fn=i2v_open_output_folder
     )
+    # 绑定按钮点击事件
+    i2v_prompt_inference_button.click(
+        fn=prompt_inference, inputs=[i2v_input_image], outputs=[i2v_prompt]
+    )
+    # 绑定按钮点击事件
+    i2v_prompt_refiner_button.click(
+        fn=optimize_chinese_prompt, inputs=[i2v_prompt], outputs=[i2v_prompt]
+    )
+ 
+
+
 
     return i2v_generation_state

@@ -149,24 +149,65 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
                 with gr.Tabs():
                     # 文本到视频标签页
                     with gr.TabItem("文生视频"):
-                        (   t2v_prompt, t2v_negative_prompt, t2v_input_image, t2v_input_video,
-                            t2v_denoising_strength, t2v_seed, t2v_rand_device, t2v_resolution,
-                            t2v_num_frames, t2v_cfg_scale, t2v_num_inference_steps, t2v_sigma_shift,
-                            t2v_tiled, t2v_tile_size, t2v_tile_stride, output_fps, output_quality,
-                            result_gallery, run_t2v_button, run_t2v_button_Disable,
-                            t2v_open_folder_button, t2v_history,t2v_prompt_reference_button,
-                            t2v_prompt_refiner_button,t2v_ModelChoices,t2v_num_persistent_param_in_dit,t2v_loadChoices
+                        (   t2v_prompt, 
+                            t2v_negative_prompt, 
+                            t2v_input_image, 
+                            t2v_input_video, 
+                            t2v_denoising_strength, 
+                            t2v_seed, 
+                            t2v_rand_device, 
+                            t2v_resolution, 
+                            t2v_num_frames, 
+                            t2v_cfg_scale, 
+                            t2v_num_inference_steps, 
+                            t2v_sigma_shift, 
+                            t2v_tiled, 
+                            t2v_tile_size, 
+                            t2v_tile_stride, 
+                            output_fps, 
+                            output_quality, 
+                            result_gallery, 
+                            run_t2v_button, 
+                            run_t2v_button_Disable, 
+                            t2v_open_folder_button, 
+                            t2v_history,
+                            t2v_prompt_reference_button,
+                            t2v_prompt_refiner_button,
+                            t2v_ModelChoices,
+                            t2v_num_persistent_param_in_dit,
+                            t2v_loadChoices
                         ) = create_t2v_ui()
                                 
                            
                     # 图像到视频标签页
                     with gr.TabItem("图生视频（施工中）"):
-                        (   i2v_prompt, i2v_negative_prompt, i2v_input_image, i2v_input_video,
-                            i2v_denoising_strength, i2v_seed, i2v_rand_device, i2v_resolution,
-                            i2v_num_frames, i2v_cfg_scale, i2v_num_inference_steps, i2v_sigma_shift,
-                            i2v_tiled, i2v_tile_size, i2v_tile_stride, i2v_output_fps, i2v_output_quality,
-                            i2v_result_gallery, run_i2v_button, run_i2v_button_Disable,
-                            i2v_open_folder_button, i2v_history,i2v_num_persistent_param_in_dit
+                        (   i2v_prompt, 
+                            i2v_negative_prompt, 
+                            i2v_input_image, 
+                            i2v_input_video, 
+                            i2v_denoising_strength, 
+                            i2v_seed, 
+                            i2v_rand_device, 
+                            i2v_resolution, 
+                            i2v_num_frames, 
+                            i2v_cfg_scale, 
+                            i2v_num_inference_steps, 
+                            i2v_sigma_shift, 
+                            i2v_tiled, 
+                            i2v_tile_size, 
+                            i2v_tile_stride, 
+                            i2v_output_fps, 
+                            i2v_output_quality, 
+                            i2v_result_gallery, 
+                            run_i2v_button, 
+                            run_i2v_button_Disable, 
+                            i2v_open_folder_button, 
+                            i2v_history,
+                            i2v_num_persistent_param_in_dit,
+                            i2v_ModelChoices,
+                            i2v_loadChoices,
+                            i2v_prompt_refiner_button,
+                            i2v_prompt_inference_button
                         ) = create_i2v_ui()
                         
                     # 视频到视频标签页
@@ -194,7 +235,8 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
         run_i2v_button, run_i2v_button_Disable, i2v_prompt, i2v_negative_prompt, i2v_input_image, i2v_input_video,
         i2v_denoising_strength, i2v_seed, i2v_rand_device, i2v_resolution, i2v_num_frames, i2v_cfg_scale,
         i2v_num_inference_steps, i2v_sigma_shift, i2v_tiled, i2v_tile_size, i2v_tile_stride, i2v_output_fps, i2v_output_quality,
-        i2v_result_gallery, i2v_history, i2v_open_folder_button,i2v_num_persistent_param_in_dit
+        i2v_result_gallery, i2v_history, i2v_open_folder_button,i2v_num_persistent_param_in_dit,
+        i2v_ModelChoices, i2v_loadChoices, i2v_prompt_refiner_button, i2v_prompt_inference_button
     )
     # 显示github上md文件的内容
     with gr.Row():

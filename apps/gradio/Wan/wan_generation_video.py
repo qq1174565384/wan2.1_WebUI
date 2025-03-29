@@ -79,7 +79,6 @@ custom_css = """
 
 
 
-
 /* 复选框样式 */
 #custom-checkbox input[type="checkbox"] {
     appearance: none; /* 移除默认样式 */
@@ -122,6 +121,41 @@ custom_css = """
     margin-left: 20px; /* 文本与复选框之间的间距 */
     margin-top: 0px; /* 上边距 */
 }
+/* Textbox 样式 */
+#textbox {
+    background-color: #444; /* 背景颜色 */
+    color: #f8f9fa; /* 文字颜色 */
+    border: 10x solid #2c3136; /* 边框颜色 */
+    font-size: 15px; /* 字体大小 */
+    margin-top: 0px; /* 上边距 */
+    margin-bottom: 0px; /* 下边距 */
+    margin-left: 0px; /* 左边距 */
+    margin-right: 0px; /* 右边距 */
+    padding: 0px; /* 内边距 */
+    border-radius: 4px; /* 圆角 */
+    width: 10px; /* 宽度 */
+    
+
+}
+.gr-text-input {
+    border: 2px solid #FF6347;
+    background-color: #F5F5F5;
+    color: #333;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+}
+.gr-text-input:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+
+
+
+
 """
 # 加载模型状态
 t2v_model_state = False
@@ -180,7 +214,7 @@ with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
                                 
                            
                     # 图像到视频标签页
-                    with gr.TabItem("图生视频（施工中）"):
+                    with gr.TabItem("图生视频"):
                         (   i2v_prompt, 
                             i2v_negative_prompt, 
                             i2v_input_image, 

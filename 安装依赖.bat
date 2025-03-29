@@ -95,12 +95,8 @@ if /i "%install_flash_attn%"=="Y" (
     )
 )
 
-@REM pip install datasets==2.18.0
-@REM pip install simplejson
-pip install decord>=0.6.0
-pip install librosa
-pip install fairseq
-
+pip install modelscope[framework] -i https://mirrors.aliyun.com/pypi/simple/
+pip install open_clip_torch -i https://mirrors.aliyun.com/pypi/simple/
 echo 所有依赖安装成功！
 pause
 

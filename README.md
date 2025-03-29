@@ -43,7 +43,7 @@ python -m venv .wan2.1env
 #### 4，激活虚拟环境
 
 ``` sh
-.\myenv\Scripts\activate
+.wan2.1env\Scripts\activate
 ```
 #### 5，安装依赖
 

@@ -2,8 +2,9 @@ import gradio as gr
 from function.history import  load_i2v_history
 from function.video_generation import generate_video_from_image
 from function.open_output_folder import i2v_open_output_folder
-from function.prompt_refiners import optimize_chinese_prompt
+from function.prompt_refiners import optimize_chinese_prompt 
 from function.prompt_inference import prompt_inference
+from function.prompt_translate import prompt_translate
 def setup_i2v_button_events(
     run_i2v_button, run_i2v_button_Disable, i2v_prompt, i2v_negative_prompt, i2v_input_image, i2v_input_video,
     i2v_denoising_strength, i2v_seed, i2v_rand_device, i2v_resolution, i2v_num_frames, i2v_cfg_scale,
@@ -81,6 +82,8 @@ def setup_i2v_button_events(
     # 绑定按钮点击事件
     i2v_prompt_inference_button.click(
         fn=prompt_inference, inputs=[i2v_input_image], outputs=[i2v_prompt]
+    ).then(
+        fn=prompt_translate, inputs=[i2v_prompt], outputs=[i2v_prompt]
     )
     # 绑定按钮点击事件
     i2v_prompt_refiner_button.click(

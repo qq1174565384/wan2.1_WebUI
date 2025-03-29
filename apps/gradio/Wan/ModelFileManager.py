@@ -2,6 +2,7 @@ import gradio as gr
 from modelscope import snapshot_download, dataset_snapshot_download
 from diffsynth import download_models
 import os
+from transformers import BlipProcessor, BlipForConditionalGeneration
 # 获取项目根目录的绝对路径
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 
@@ -60,6 +61,15 @@ def ModelFileManager():
                 os.chdir(project_root)
                 download_models(["QwenPrompt"])
                 return "已下载", gr.update(interactive=True), gr.update(interactive=True)
+            def download_blip_model(model_id, local_dir):  
+                os.chdir(project_root)
+                local_model_path = os.path.join(project_root, 'models','Salesforce','blip-image-captioning-large')
+                processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
+                model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large")
+                # 保存处理器和模型到本地
+                processor.save_pretrained(local_model_path)
+                model.save_pretrained(local_model_path)
+                return "已下载", gr.update(interactive=True), gr.update(interactive=True)
 
             def open_folder(local_dir):
                 os.startfile(local_dir) if os.name == 'nt' else os.system(f'xdg-open {local_dir}')
@@ -71,7 +81,7 @@ def ModelFileManager():
                 # 移除多余逗号
                 local_dir_1 = os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B")
                 exist_1 = check_model_exist(local_dir_1)
-                status_text_1 = gr.Textbox(value="文件夹已存在" if exist_1 else "未存在", label=f"{model_id_1} (文生视频用）状态", interactive=False)
+                status_text_1 = gr.Textbox(value="文件夹已存在" if exist_1 else "未存在", label=f"{model_id_1} (文生视频用）", interactive=False)
                 download_btn_1 = gr.Button(value="下载", interactive=not exist_1)
                 open_btn_1 = gr.Button(value="打开所在文件夹", interactive=exist_1)
                 local_dir_state_1 = gr.State(value=local_dir_1)
@@ -88,7 +98,7 @@ def ModelFileManager():
                 # 移除多余逗号和重复路径
                 local_dir_3 = os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-14B")
                 exist_3 = check_model_exist(local_dir_3)
-                status_text_3 = gr.Textbox(value="文件夹已存在" if exist_3 else "未存在", label=f"{model_id_3} (文生视频用）状态", interactive=False)
+                status_text_3 = gr.Textbox(value="文件夹已存在" if exist_3 else "未存在", label=f"{model_id_3} (文生视频用）", interactive=False)
                 download_btn_3 = gr.Button(value="下载", interactive=not exist_3)
                 open_btn_3 = gr.Button(value="打开所在文件夹", interactive=exist_3)
                 local_dir_state_3 = gr.State(value=local_dir_3)
@@ -104,7 +114,7 @@ def ModelFileManager():
                 # 移除多余逗号和重复路径
                 local_dir_2 = os.path.join(project_root, "models", "Wan-AI", "Wan2.1-I2V-14B-480P")
                 exist_2 = check_model_exist(local_dir_2)
-                status_text_2 = gr.Textbox(value="文件夹已存在" if exist_2 else "未存在", label=f"{model_id_2} (图生视频用）状态", interactive=False)
+                status_text_2 = gr.Textbox(value="文件夹已存在" if exist_2 else "未存在", label=f"{model_id_2} (图生视频用）", interactive=False)
                 download_btn_2 = gr.Button(value="下载", interactive=not exist_2)
                 open_btn_2 = gr.Button(value="打开所在文件夹", interactive=exist_2)
                 local_dir_state_2 = gr.State(value=local_dir_2)
@@ -120,7 +130,7 @@ def ModelFileManager():
                 # 移除多余逗号和重复路径
                 local_dir_4 = os.path.join(project_root, "models", "Wan-AI", "Wan2.1-I2V-14B-720P")
                 exist_4 = check_model_exist(local_dir_4)
-                status_text_4 = gr.Textbox(value="文件夹已存在" if exist_4 else "未存在", label=f"{model_id_4} (图生视频用）状态", interactive=False)
+                status_text_4 = gr.Textbox(value="文件夹已存在" if exist_4 else "未存在", label=f"{model_id_4} (图生视频用）", interactive=False)
                 download_btn_4 = gr.Button(value="下载", interactive=not exist_4)
                 open_btn_4 = gr.Button(value="打开所在文件夹", interactive=exist_4)
                 local_dir_state_4 = gr.State(value=local_dir_4)
@@ -138,7 +148,7 @@ def ModelFileManager():
                 # 移除多余逗号和重复路径
                 local_dir_5 = os.path.join(project_root, "models", "QwenPrompt", "qwen2-1.5b-instruct")
                 exist_5 = check_model_exist(local_dir_5)
-                status_text_5 = gr.Textbox(value="文件夹已存在" if exist_5 else "未存在", label=f"{model_id_5}  (提示词优化用）状态", interactive=False)
+                status_text_5 = gr.Textbox(value="文件夹已存在" if exist_5 else "未存在", label=f"{model_id_5}  (提示词优化用）", interactive=False)
                 download_btn_5 = gr.Button(value="下载", interactive=not exist_5)
                 open_btn_5 = gr.Button(value="打开所在文件夹", interactive=exist_5)
                 local_dir_state_5 = gr.State(value=local_dir_5)
@@ -148,14 +158,31 @@ def ModelFileManager():
                     inputs=[gr.State(model_id_5), local_dir_state_5],
                     outputs=[status_text_5, download_btn_5, open_btn_5]
 
+                )
+
+            with gr.Column():
+                #千问模型
+                model_id_6 = "Salesforce/blip-image-captioning-large"
+                # 移除多余逗号和重复路径
+                local_dir_6 = os.path.join(project_root, "models", "Salesforce", "qblip-image-captioning-large")
+                exist_6 = check_model_exist(local_dir_6)
+                status_text_6 = gr.Textbox(value="文件夹已存在" if exist_6 else "未存在", label=f"{model_id_6}  (提示词反推用）", interactive=False)
+                download_btn_6 = gr.Button(value="下载", interactive=not exist_6)
+                open_btn_6 = gr.Button(value="打开所在文件夹", interactive=exist_6)
+                local_dir_state_6 = gr.State(value=local_dir_6)
+            
+                download_btn_6.click(
+                    fn=download_blip_model,
+                    inputs=[gr.State(model_id_6), local_dir_state_6],
+                    outputs=[status_text_6, download_btn_6, open_btn_6]
             
                 )
         with gr.Row():
             refresh_btn = gr.Button("重新检测")
             refresh_btn.click(fn=refresh_check, outputs=[
-                    status_text_1, status_text_3, status_text_2, status_text_4, status_text_5,
-                    download_btn_1, download_btn_3, download_btn_2, download_btn_4, download_btn_5,
-                    open_btn_1, open_btn_3, open_btn_2, open_btn_4, open_btn_5
+                    status_text_1, status_text_3, status_text_2, status_text_4, status_text_5,status_text_6,
+                    download_btn_1, download_btn_3, download_btn_2, download_btn_4, download_btn_5,download_btn_6,
+                    open_btn_1, open_btn_3, open_btn_2, open_btn_4, open_btn_5, open_btn_6
                 ]
             )
 
@@ -170,3 +197,4 @@ def ModelFileManager():
         open_btn_3.click(fn=open_folder, inputs=[local_dir_state_3])
         open_btn_4.click(fn=open_folder, inputs=[local_dir_state_4])
         open_btn_5.click(fn=open_folder, inputs=[local_dir_state_5])
+        open_btn_6.click(fn=open_folder, inputs=[local_dir_state_6])

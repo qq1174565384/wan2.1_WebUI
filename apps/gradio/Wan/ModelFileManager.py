@@ -68,12 +68,18 @@ def ModelFileManager():
             def download_blip_model(model_id, local_dir):  
                 os.chdir(project_root)
                 local_model_path = os.path.join(project_root, 'models','Salesforce','blip-image-captioning-large')
-                processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
-                model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large")
-                # 保存处理器和模型到本地
-                processor.save_pretrained(local_model_path)
-                model.save_pretrained(local_model_path)
-                return "已下载", gr.update(interactive=True), gr.update(interactive=True)
+                # 设置从清华镜像站下载模型
+                mirror_url = "https://hf-mirror.com"
+                try:
+                    processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large", mirror=mirror_url)
+                    model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large", mirror=mirror_url)
+                    # 保存处理器和模型到本地
+                    processor.save_pretrained(local_model_path)
+                    model.save_pretrained(local_model_path)
+                    return "已下载", gr.update(interactive=True), gr.update(interactive=True)
+                except Exception as e:
+                    print(f"从清华镜像站下载 Salesforce/blip-image-captioning-large 模型失败: {e}")
+                    return "下载失败，请检查网络连接", gr.update(interactive=False), gr.update(interactive=False)
 
             def open_folder(local_dir):
                 os.startfile(local_dir) if os.name == 'nt' else os.system(f'xdg-open {local_dir}')

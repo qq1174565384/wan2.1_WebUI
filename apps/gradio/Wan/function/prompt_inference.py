@@ -25,8 +25,11 @@ http.mount("http://", adapter)
 def prompt_inference(image):
     os.chdir(project_root)
 
-    # 设置 Hugging Face 镜像源
-    os.environ['HF_ENDPOINT'] = 'https://mirror.aliyun.com/hugging-face-models'
+    # 设置 Hugging Face 镜像源为清华镜像站
+    os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
+    # 告诉 transformers 使用镜像
+    os.environ['TRANSFORMERS_OFFLINE'] = '0'
+    os.environ['HF_HUB_OFFLINE'] = '0'
 
     try:
         print("正在尝试从本地加载blip-image-captioning-large模型...")
@@ -37,8 +40,9 @@ def prompt_inference(image):
         # 如果本地没有，从 Hugging Face 下载并保存到本地
         print("本地加载失败，正在尝试从 Hugging Face 下载...")
         try:
-            processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large", timeout=30)
-            model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large", timeout=30)
+            # 注意这里的路径前缀
+            processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large", mirror="https://hf-mirror.com")
+            model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large", mirror="https://hf-mirror.com")
             # 保存处理器和模型到本地
             processor.save_pretrained(local_model_path)
             model.save_pretrained(local_model_path)

@@ -3,7 +3,7 @@
 https://github.com/qq1174565384/wan2.1_WebUI/releases
 https://space.bilibili.com/147981408
 
-版本号: 0.1.0(alpha)
+版本号: 0.1.1(alpha)
 发布日期: 2025-03-29
 
 ### 新增功能

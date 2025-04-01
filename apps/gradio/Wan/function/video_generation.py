@@ -6,12 +6,13 @@ import random
 import ast
 from datetime import datetime
 import os.path
+import threading
 
 
 # 获取项目根目录的绝对路径
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
 
-
+global t2v_model_state,i2v_model_state, model_manager, pipe
 t2v_model_state = False  # 初始化模型状态为 False
 i2v_model_state = False  # 初始化模型状态为 False
 # 定义t2v函数
@@ -37,30 +38,30 @@ def generate_video_from_text(
     t2v_num_persistent_param_in_dit=0,
     t2v_loadChoices="RAM"
 ):
-    global t2v_model_state,i2v_model_state, t2v_model_manager, t2v_pipe, i2v_model_manager, i2v_pipe
-
-    def download_and_load_model(model_choice, project_root, t2v_model_state):
+    global t2v_model_state,i2v_model_state, model_manager, pipe
+    def download_and_load_model(model_choice, project_root):
+        global t2v_model_state,i2v_model_state, model_manager, pipe
         if model_choice == "Wan-AI/Wan2.1-T2V-1.3B":
             model_name = "Wan2.1-T2V-1.3B"
             model_paths = [
-                os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model.safetensors"),
-                os.path.join(project_root, "models", "Wan-AI", model_name, "models_t5_umt5-xxl-enc-bf16.pth"),
-                os.path.join(project_root, "models", "Wan-AI", model_name, "Wan2.1_VAE.pth"),
+                os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "diffusion_pytorch_model.safetensors"),
+                os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "models_t5_umt5-xxl-enc-bf16.pth"),
+                os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-1.3B", "Wan2.1_VAE.pth"),
             ]
             torch_dtype = torch.bfloat16
         else:
             model_name = "Wan2.1-T2V-14B"
             model_paths = [
                 [
-                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00001-of-00006.safetensors"),
-                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00002-of-00006.safetensors"),
-                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00003-of-00006.safetensors"),
-                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00004-of-00006.safetensors"),
-                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00005-of-00006.safetensors"),
-                    os.path.join(project_root, "models", "Wan-AI", model_name, "diffusion_pytorch_model-00006-of-00006.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-14B", "diffusion_pytorch_model-00001-of-00006.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-14B", "diffusion_pytorch_model-00002-of-00006.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-14B", "diffusion_pytorch_model-00003-of-00006.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-14B", "diffusion_pytorch_model-00004-of-00006.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-14B", "diffusion_pytorch_model-00005-of-00006.safetensors"),
+                    os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-14B", "diffusion_pytorch_model-00006-of-00006.safetensors"),
                 ],
-                os.path.join(project_root, "models", "Wan-AI", model_name, "models_t5_umt5-xxl-enc-bf16.pth"),
-                os.path.join(project_root, "models", "Wan-AI", model_name, "Wan2.1_VAE.pth"),
+                os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-14B", "models_t5_umt5-xxl-enc-bf16.pth"),
+                os.path.join(project_root, "models", "Wan-AI", "Wan2.1-T2V-14B", "Wan2.1_VAE.pth"),
             ]
             torch_dtype = torch.float8_e4m3fn
 
@@ -81,30 +82,31 @@ def generate_video_from_text(
             print(f"无效的 t2v_loadChoices 值: {t2v_loadChoices}，使用默认值 cpu")
             device = "cpu"
 
-        t2v_model_manager = ModelManager(device=device) 
+        model_manager = ModelManager(device=device) 
         
-        try:
-            t2v_model_manager.load_models(
-                model_paths,
-                torch_dtype=torch_dtype,
-            )
-        except Exception as e:
-            print(f"模型加载失败: {e}")
-            raise
+        if not t2v_model_state:  # 根据 t2v_model_state 值判断是否执行模型加载
+            try:
+                model_manager.load_models(
+                    model_paths,
+                    torch_dtype=torch_dtype,
+                )
+            except Exception as e:
+                print(f"模型加载失败: {e}")
+                raise
 
-        # 创建管道
-        t2v_pipe = WanVideoPipeline.from_model_manager(t2v_model_manager, torch_dtype=torch.bfloat16, device="cuda")
-        t2v_pipe.enable_vram_management(num_persistent_param_in_dit=t2v_num_persistent_param_in_dit)
+            # 创建管道
+            pipe = WanVideoPipeline.from_model_manager(model_manager, torch_dtype=torch.bfloat16, device="cuda")
+            pipe.enable_vram_management(num_persistent_param_in_dit=t2v_num_persistent_param_in_dit)
 
-        return t2v_model_manager, t2v_pipe
+        return model_manager, pipe
 
     if t2v_ModelChoices == "Wan-AI/Wan2.1-T2V-1.3B":
-        t2v_model_manager, t2v_pipe = download_and_load_model(
-            "Wan-AI/Wan2.1-T2V-1.3B", project_root, t2v_model_state
+        model_manager, pipe = download_and_load_model(
+            "Wan-AI/Wan2.1-T2V-1.3B", project_root
         )
     else:
-        t2v_model_manager, t2v_pipe = download_and_load_model(
-            "Wan-AI/Wan2.1-T2V-14B", project_root, t2v_model_state
+        model_manager, pipe = download_and_load_model(
+            "Wan-AI/Wan2.1-T2V-14B", project_root
         )
 
     t2v_model_state = True
@@ -123,7 +125,7 @@ def generate_video_from_text(
 
     print("正在生成视频...")
     try:
-        t2v = t2v_pipe(
+        t2v = pipe(
             prompt=t2v_prompt,
             negative_prompt=t2v_negative_prompt,
             input_image=t2v_input_image,
@@ -224,11 +226,11 @@ def generate_video_from_image(
     i2v_ModelChoices = "Wan-AI/Wan2.1-I2V-14B-480P",
     i2v_loadChoices = "CPU"
 ):
-    global t2v_model_state,i2v_model_state, t2v_model_manager, t2v_pipe, i2v_model_manager, i2v_pipe
+    global t2v_model_state,i2v_model_state, model_manager, pipe
 
-    def download_and_load_model(model_choice, project_root, i2v_model_state):
+    def download_and_load_model(model_choice, project_root):
        
-
+        global t2v_model_state,i2v_model_state, model_manager, pipe
         #按需加载模型    
         if model_choice == "Wan-AI/Wan2.1-I2V-14B-480P":
             model_name = "Wan2.1-I2V-14B-480P"
@@ -292,38 +294,42 @@ def generate_video_from_image(
 
 
         # 加载模型
-        i2v_model_manager = ModelManager(device=device) 
-        
-        try:
-            i2v_model_manager.load_models(
-                model_paths1,
-                torch_dtype=torch.float32, # Image Encoder is loaded with float32
-            )
-            i2v_model_manager.load_models(
-                model_paths2,
-                torch_dtype=torch.float16,
-            )
-        except Exception as e:
-            print(f"模型加载失败: {e}")
-            raise
+        model_manager = ModelManager(device=device) 
 
-        # 创建管道
-        i2v_pipe = WanVideoPipeline.from_model_manager(i2v_model_manager, torch_dtype=torch.bfloat16, device="cuda")
-        i2v_pipe.enable_vram_management(num_persistent_param_in_dit=i2v_num_persistent_param_in_dit)
+        if not i2v_model_state:
+            try:
+                model_manager.load_models(
+                    model_paths1,
+                    torch_dtype=torch.float32, # Image Encoder is loaded with float32
+                )
+                model_manager.load_models(
+                    model_paths2,
+                    torch_dtype=torch.float16,
+                )
+            except Exception as e:
+                print(f"模型加载失败: {e}")
+                raise
 
-        return i2v_model_manager, i2v_pipe
+            # 创建管道
+            pipe = WanVideoPipeline.from_model_manager(model_manager, torch_dtype=torch.bfloat16, device="cuda")
+            pipe.enable_vram_management(num_persistent_param_in_dit=i2v_num_persistent_param_in_dit)
+
+        return model_manager, pipe
 
     if i2v_ModelChoices == "Wan-AI/Wan2.1-I2V-14B-480P":
-        i2v_model_manager, i2v_pipe = download_and_load_model(
-            "Wan-AI/Wan2.1-I2V-14B-480P", project_root, i2v_model_state
+        model_manager, pipe = download_and_load_model(
+            "Wan-AI/Wan2.1-I2V-14B-480P", project_root
         )
     else:
-        i2v_model_manager, i2v_pipe = download_and_load_model(
-            "Wan-AI/Wan2.1-I2V-14B-720P", project_root, i2v_model_state
+        model_manager, pipe = download_and_load_model(
+            "Wan-AI/Wan2.1-I2V-14B-720P", project_root
         )
+
     t2v_model_state = False
     i2v_model_state = True
-    
+
+
+
 
 
     # 处理输入参数
@@ -337,7 +343,7 @@ def generate_video_from_image(
     
     print("正在生成视频...")
     try:
-        i2v = i2v_pipe(
+        i2v = pipe(
             prompt=i2v_prompt,
             negative_prompt=i2v_negative_prompt,
             input_image=i2v_input_image,

@@ -7,6 +7,17 @@ from i2v_button_events import setup_i2v_button_events
 import requests
 from ModelFileManager import  ModelFileManager
 
+js_func = """
+function refresh() {
+    const url = new URL(window.location);
+
+    if (url.searchParams.get('__theme') !== 'dark') {
+        url.searchParams.set('__theme', 'dark');
+        window.location.href = url.href;
+    }
+}
+"""
+
 # # 定义css样式
 custom_css = """
 /* 按钮样式 */
@@ -163,7 +174,7 @@ i2v_model_state = False
 v2v_model_state = False
 
 # # 创建 Gradio 界面
-with gr.Blocks(css=custom_css,theme=gr.themes.Base()) as demo:
+with gr.Blocks(css=custom_css,theme=gr.themes.Base(),js=js_func) as demo:
     # 显示一个 HTML 标题，居中、32px 字体大小、加粗，并在底部留出 20px 边距
     gr.HTML("""
                <div style="text-align: center; font-size: 32px; font-weight: bold; margin-bottom: 20px;">

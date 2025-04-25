@@ -56,13 +56,16 @@ class TextVideoDataset(torch.utils.data.Dataset):
             frame = Image.fromarray(frame)
             frame = self.crop_and_resize(frame)
             if first_frame is None:
-                first_frame = np.array(frame)
+                first_frame = frame
             frame = frame_process(frame)
             frames.append(frame)
         reader.close()
 
         frames = torch.stack(frames, dim=0)
         frames = rearrange(frames, "T C H W -> C T H W")
+        
+        first_frame = v2.functional.center_crop(first_frame, output_size=(self.height, self.width))
+        first_frame = np.array(first_frame)
 
         if self.is_i2v:
             return frames, first_frame
@@ -140,7 +143,7 @@ class LightningModelForDataProcess(pl.LightningModule):
             if "first_frame" in batch:
                 first_frame = Image.fromarray(batch["first_frame"][0].cpu().numpy())
                 _, _, num_frames, height, width = video.shape
-                image_emb = self.pipe.encode_image(first_frame, num_frames, height, width)
+                image_emb = self.pipe.encode_image(first_frame, None, num_frames, height, width)
             else:
                 image_emb = {}
             data = {"latents": latents, "prompt_emb": prompt_emb, "image_emb": image_emb}
